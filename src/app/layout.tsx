@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { Inter, Ubuntu, Bungee_Shade } from "next/font/google";
+import { Ubuntu, Bungee_Shade, Gugi, Archivo_Black } from "next/font/google";
 import "./globals.css";
+import SessionWrapper from "@/components/sessionWrapper";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
   weight: "300",
 });
 const bungee_Shade = Bungee_Shade({
+  subsets: ["latin"],
+  weight: "400",
+});
+const gugi = Gugi({
+  subsets: ["latin"],
+  weight: "400",
+});
+const archivoBlack = Archivo_Black({
   subsets: ["latin"],
   weight: "400",
 });
@@ -23,9 +32,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={` ${ubuntu.className}${bungee_Shade.className}`}>
-        {children}
-      </body>
+      <SessionWrapper>
+        <body
+          className={` ${ubuntu.className}${bungee_Shade.className}${gugi.className}${archivoBlack.className}`}
+        >
+          {children}
+        </body>
+      </SessionWrapper>
     </html>
   );
 }

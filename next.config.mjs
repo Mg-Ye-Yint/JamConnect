@@ -2,7 +2,8 @@
 const nextConfig = {
     images: {
         domains: [
-            'cdn-icons-png.flaticon.com'
+            'cdn-icons-png.flaticon.com',
+            'lh3.googleusercontent.com'
         ]
     }
 };

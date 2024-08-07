@@ -16,6 +16,8 @@ const config: Config = {
       fontFamily: {
         ubuntu: ['Ubuntu', 'sans-serif'],
         bungee: ['Bungee Shade', 'cursive'],
+        gugi: ['Gugi', "static"],
+        archivoBlack: ['Archivo_Black', 'static']
       },
     },
   },
