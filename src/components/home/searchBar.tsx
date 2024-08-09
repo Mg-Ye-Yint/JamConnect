@@ -8,7 +8,7 @@ const SearchBar = () => {
 
   const clickSearch = (event: any) => {
     event.preventDefault();
-    console.log("Value :", searchText);
+    // console.log("Value :", searchText);
   };
 
   return (

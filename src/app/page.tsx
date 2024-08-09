@@ -1,12 +1,16 @@
 "use client";
 
 import Footer from "@/components/footer";
-import Header from "@/components/header";
 import Body from "@/components/home/body";
 import InstrumentsList from "@/components/home/instrumentsList";
 import SearchBar from "@/components/home/searchBar";
 import app from "../../shared/firebase.config";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  Timestamp,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Post from "@/components/home/post";
 
@@ -14,7 +18,7 @@ interface Post {
   title: string;
   desc: string;
   image: string;
-  date: Date;
+  date: Timestamp;
   location: string;
 }
 
@@ -38,7 +42,7 @@ export default function Home() {
           title: doc.data().title,
           desc: doc.data().desc,
           image: doc.data().image,
-          date: doc.data().date.toDate(),
+          date: doc.data().date === undefined ? "" : doc.data().date.toDate(),
           location: doc.data().location,
         } as Post)
     );
@@ -47,7 +51,6 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
-      <Header />
       <Body />
       <SearchBar />
       <InstrumentsList />

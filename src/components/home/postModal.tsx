@@ -1,7 +1,7 @@
 import React from "react";
 import PostItem from "./postItem";
 
-function Postmodal({ posts, model }) {
+function Postmodal({ posts }) {
   return (
     <div>
       <dialog id="my_modal_2" className="modal">

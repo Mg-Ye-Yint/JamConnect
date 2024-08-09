@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Ubuntu, Bungee_Shade, Gugi, Archivo_Black } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "@/components/sessionWrapper";
+import Header from "@/components/header";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -36,6 +37,7 @@ export default function RootLayout({
         <body
           className={` ${ubuntu.className}${bungee_Shade.className}${gugi.className}${archivoBlack.className}`}
         >
+          <Header />
           {children}
         </body>
       </SessionWrapper>

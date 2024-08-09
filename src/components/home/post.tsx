@@ -3,12 +3,13 @@
 import React, { useEffect, useState } from "react";
 import PostItem from "./postItem";
 import Postmodal from "./postModal";
+import { Timestamp } from "firebase/firestore";
 
 interface PostType {
   title: string;
   desc: string;
   image: string;
-  date: Date;
+  date: Timestamp;
   location: string;
 }
 
@@ -16,7 +17,7 @@ const Post = ({ posts }: { posts: PostType[] }) => {
   const [post, setPost] = useState(null);
 
   useEffect(() => {
-    console.log("Posts", posts);
+    // console.log("Posts", posts);
   }, [posts]);
 
   const openModal = () => {
@@ -39,7 +40,7 @@ const Post = ({ posts }: { posts: PostType[] }) => {
               setPost(item);
             }}
           >
-            <PostItem post={item} modal={true} />
+            <PostItem post={item} />
           </div>
         ))}
       </div>

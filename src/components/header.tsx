@@ -3,11 +3,25 @@
 import React from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import LoginRequest from "./home/loginRequest";
+import { attemptStore } from "@/store";
 
 function Header() {
   const DEFAULT_IMAGE = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const { data: session } = useSession();
   const imageSrc = session?.user?.image || DEFAULT_IMAGE;
+
+  const pathname = usePathname();
+
+  const { loginAttempt, setLoginAttempt } = attemptStore((state) => ({
+    loginAttempt: state.loginAttempt,
+    setLoginAttempt: state.setLoginAttempt,
+  }));
+
+  const linkDestination = pathname === "/" ? "/create-post" : "/";
+
   return (
     <div className="flex flex-row items-center justify-between w-full p-4 border-b-2 bg-gray-700">
       <div className="flex flex-col md:flex-row items-center gap-3">
@@ -31,30 +45,53 @@ function Header() {
             width={100}
             height={100}
           />
-          <button className="flex flex-col justify-center bg-blue-700 rounded-md items-center p-2 hover:bg-blue-800 cursor-pointer md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]">
-            <p className="text-white text-[10px] md:text-lg lg:text-2xl font-medium ">
-              Create Session
-            </p>
-          </button>
+          {session ? (
+            <Link
+              className="flex flex-col justify-center bg-blue-700 rounded-md items-center p-2 hover:bg-blue-800 cursor-pointer md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]"
+              href={linkDestination}
+            >
+              {pathname === "/" ? (
+                <p className="text-white text-[10px] md:text-lg lg:text-xl font-medium ">
+                  Create Session
+                </p>
+              ) : (
+                <p className="text-white text-[10px] md:text-lg lg:text-xl font-medium ">
+                  Home Page
+                </p>
+              )}
+            </Link>
+          ) : (
+            <button
+              className="flex flex-col justify-center bg-blue-700 rounded-md items-center p-2 hover:bg-blue-800 cursor-pointer md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]"
+              onClick={() => {
+                setLoginAttempt(true);
+              }}
+            >
+              <p className="text-white text-[10px] md:text-lg lg:text-xl font-medium ">
+                Create Session
+              </p>
+            </button>
+          )}
+          {loginAttempt ? <LoginRequest /> : null}
           {session ? (
             <button
-              className=" bg-red-500 rounded-md items-center p-2 hover:bg-red-600 cursor-pointer w-full md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]"
+              className="flex flex-col justify-center bg-red-500 rounded-md items-center  p-2 hover:bg-red-600 cursor-pointer w-full md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]"
               onClick={() => {
                 signOut();
               }}
             >
-              <p className="text-white text-[10px] md:text-lg lg:text-2xl text-center font-medium lg:h-[62px]">
+              <p className="text-white text-[10px] md:text-lg lg:text-xl font-medium">
                 Sign Out
               </p>
             </button>
           ) : (
             <button
-              className=" bg-green-500 rounded-md items-center p-2 hover:bg-green-600 cursor-pointer w-full md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]"
+              className="flex flex-col bg-green-500 rounded-md items-center justify-center p-2 hover:bg-green-600 cursor-pointer w-full md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px]"
               onClick={() => {
                 signIn();
               }}
             >
-              <p className="text-white text-[10px] md:text-lg lg:text-2xl text-center font-medium">
+              <p className="text-white text-[10px] md:text-lg lg:text-xl  font-medium">
                 Sign In
               </p>
             </button>

@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import React from "react";
 import { HiOutlineCalendar, HiOutlineLocationMarker } from "react-icons/hi";
 
@@ -5,25 +6,30 @@ interface PostType {
   title: string;
   desc: string;
   image: string;
-  date: Date;
+  date: any;
   location: string;
 }
 
-const PostItem = ({
-  post,
-  modal = false,
-}: {
-  post: PostType;
-  modal: boolean;
-}) => {
+const PostItem = ({ post }: { post: PostType }) => {
   if (!post) {
     return null;
   }
 
-  const timeWithoutSeconds = post.date!.toLocaleTimeString([], {
+  const postDate = new Date(post.date);
+
+  const formattedDate = postDate.toLocaleDateString([], {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+  const formattedTime = postDate.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: true, // Use 12-hour time format (am/pm)
   });
+
+  const formattedDateTime = `${formattedDate} - ${formattedTime}`;
 
   return (
     <div className="w-[250px] md:w-[300px] lg:w-[350px] h-[400px] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -38,7 +44,7 @@ const PostItem = ({
         <div className="flex items-center gap-2">
           <HiOutlineCalendar className="text-white font-bold" />
           <p className="text-gray-700 dark:text-gray-400">
-            {timeWithoutSeconds}
+            {formattedDateTime}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -58,9 +64,9 @@ const PostItem = ({
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M1 5h12m0 0L9 1m4 4L9 9"
             />
           </svg>
