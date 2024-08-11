@@ -17,9 +17,13 @@ import Post from "@/components/home/post";
 interface Post {
   title: string;
   desc: string;
-  image: string;
+  imageUrl: string;
   date: Timestamp;
   location: string;
+  userEmail: string;
+  userImage: string;
+  userName: string;
+  postedTime: Timestamp;
 }
 
 export default function Home() {
@@ -31,19 +35,28 @@ export default function Home() {
     getPost();
   }, []);
 
+  console.log(posts);
+
   const getPost = async () => {
     const querySnapshot = await getDocs(collection(db, "posts")); //app သိမ်းထားတဲ့ variable ကို getDocs function                                                      သုံးပြီးပေးထားတဲ့ dataBase နာမည်အတိုင်းရှာတယ်
     querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
+      // console.log(doc.id, " => ", doc.data());
     });
     const postsData: Post[] = querySnapshot.docs.map(
       (doc) =>
         ({
           title: doc.data().title,
           desc: doc.data().desc,
-          image: doc.data().image,
+          imageUrl: doc.data().imageUrl,
           date: doc.data().date === undefined ? "" : doc.data().date.toDate(),
           location: doc.data().location,
+          userEmail: doc.data().userEmail,
+          userImage: doc.data().userImage,
+          userName: doc.data().userName,
+          postedTime:
+            doc.data().postedTime === undefined
+              ? ""
+              : doc.data().postedTime.toDate(),
         } as Post)
     );
     setPosts(postsData);

@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LoginRequest from "./home/loginRequest";
 import { attemptStore } from "@/store";
+import { HiChevronDown } from "react-icons/hi";
+import { HiChevronUp } from "react-icons/hi";
 
 function Header() {
   const DEFAULT_IMAGE = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -20,10 +22,16 @@ function Header() {
     setLoginAttempt: state.setLoginAttempt,
   }));
 
+  const [openProfiles, setOpenProfiles] = useState(false);
+
+  const profileToogle = () => {
+    setOpenProfiles(!openProfiles);
+  };
+
   const linkDestination = pathname === "/" ? "/create-post" : "/";
 
   return (
-    <div className="flex flex-row items-center justify-between w-full p-4 border-b-2 bg-gray-700">
+    <div className=" z-20 flex flex-row items-center justify-between w-full p-1 md:p-4 border-b-2 bg-gray-700">
       <div className="flex flex-col md:flex-row items-center gap-3">
         <Image
           src="/jamming.jpg"
@@ -32,9 +40,27 @@ function Header() {
           height={90}
           className="w-18 h-12 md:w-22 md:h-16 lg:w-40 lg:h-24 rounded-lg"
         />
-        <p className="text-[20px] md:text-2xl lg:text-5xl font-bungee font-bold text-white">
-          JamConnect
-        </p>
+        <div className="flex flex-col gap-3 justify-start">
+          <p className="text-[20px] md:text-2xl lg:text-5xl font-bungee font-bold text-white">
+            BandConnect
+          </p>
+          <div className="flex flex-row items-end group gap-2">
+            <p className="text-[14px] md:text-xl lg:text-2xl font-serif font-bold text-white ">
+              See Profiles
+            </p>
+            {openProfiles ? (
+              <HiChevronUp
+                className="text-white h-[30px] w-[30px]"
+                onClick={profileToogle}
+              />
+            ) : (
+              <HiChevronDown
+                className="text-white h-[30px] w-[30px]"
+                onClick={profileToogle}
+              />
+            )}
+          </div>
+        </div>
       </div>
       <div className=" flex items-center gap-4">
         <div className="flex flex-col md:flex-row gap-2 items-center">

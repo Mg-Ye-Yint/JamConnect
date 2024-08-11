@@ -5,8 +5,17 @@ import instruments from "../../../shared/data";
 import { useSession } from "next-auth/react";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import app from "../../../shared/firebase.config";
-import { useRouter } from "next/navigation";
 import { Timestamp } from "firebase/firestore";
+import LoadingWheel from "./loadingWheel";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  UploadTaskSnapshot,
+} from "firebase/storage";
+import Posted from "./posted";
+import Instractions from "./instructions";
 
 interface InputState {
   title?: string;
@@ -17,16 +26,28 @@ interface InputState {
   instrument?: string;
   userName?: string;
   userImage?: string;
-  email?: string;
+  userEmail?: string;
+  image?: string;
 }
 
 const SubmitForm = () => {
   const { data: session } = useSession();
 
   const [input, setInput] = useState<InputState>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
   const db = getFirestore(app);
+  const storage = getStorage(app); //ဓာတ်ပုံထည့်ချင်ရင်လိုအပ်တယ်
+  const [titleCharsLeft, setTitleCharsLeft] = useState(150);
+  const [descCharsLeft, setDescCharsLeft] = useState(400);
+  const [locationCharsLeft, setLocationCharsLeft] = useState(200);
+  const [zipCharsLeft, setZipCharsLeft] = useState(5);
+  const [postTimeout, setPostTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [postSucceed, setPostSucceed] = useState(false);
 
-  const router = useRouter();
+  const capitalizeFirstLetter = (str: any) => {
+    return str.trim().charAt(0).toUpperCase() + str.trim().slice(1);
+  };
 
   useEffect(() => {
     if (session && session.user) {
@@ -34,69 +55,154 @@ const SubmitForm = () => {
         ...values,
         userName: session.user.name,
         userImage: session.user.image,
-        email: session.user.email,
+        userEmail: session.user.email,
       }));
     }
   }, [session]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(typeof input.date);
     e.preventDefault();
-    if (!input.date) {
-      console.error("Date is required");
-      return;
-    }
-    const convertedDate = new Date(input.date);
-    console.log(typeof convertedDate);
-    if (isNaN(convertedDate.getTime())) {
-      console.error("Invalid date value");
-      return;
-    }
 
-    const timestamp = Timestamp.fromDate(convertedDate);
-    console.log(typeof timestamp);
-    const dataToSave = {
-      ...input,
-      date: timestamp,
-    };
+    if (!submitting) {
+      setSubmitting(true);
+      try {
+        if (!input.date) {
+          console.error("Date is required");
+          return;
+        }
+        const convertedDate = new Date(input.date);
+        if (isNaN(convertedDate.getTime())) {
+          console.error("Invalid date value");
+          return;
+        }
 
-    await setDoc(doc(db, "posts", Date.now().toString()), dataToSave);
-    window.location.reload();
+        const timestamp = Timestamp.fromDate(convertedDate);
+        const postedTime = Timestamp.now();
+
+        let imageUrl = "";
+        if (image) {
+          const storageRef = ref(storage, `images/${Date.now()}_${image.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, image);
+
+          await new Promise<void>((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              (snapshot: UploadTaskSnapshot) => {
+                const progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(`Upload is ${progress} % done`);
+              },
+              (error) => {
+                console.error(error.message);
+                reject(error);
+              },
+              () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                  imageUrl = downloadURL;
+                  resolve();
+                });
+              }
+            );
+          });
+        }
+
+        const dataToSave = {
+          ...input,
+          date: timestamp,
+          imageUrl,
+          postedTime,
+        };
+
+        await setDoc(doc(db, "posts", Date.now().toString()), dataToSave);
+        // window.location.reload();
+      } catch (error) {
+        console.log("Error", error);
+        window.alert("Failed to create event.");
+      } finally {
+        setSubmitting(false);
+        setPostSucceed(true);
+        setTimeout(() => {
+          setPostSucceed(false);
+        }, 3000);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    }
   };
 
   const handleChange = (e: any) => {
     const name = e.target.name;
     const value = e.target.value;
-    setInput((values) => ({ ...values, [name]: value }));
+
+    if (name === "title") {
+      setTitleCharsLeft(150 - value.length);
+    }
+
+    if (name === "desc") {
+      setDescCharsLeft(400 - value.length);
+    }
+
+    if (name === "location") {
+      setLocationCharsLeft(200 - value.length);
+    }
+
+    if (name === "zip") {
+      setZipCharsLeft(5 - value.length);
+    }
+
+    setInput((values) => ({
+      ...values,
+      [name]: capitalizeFirstLetter(value.trim()),
+    }));
   };
 
   return (
     <div className=" flex flex-col  justify-center m-3 gap-y-3">
-      <h2 className="text-blue-700 font-bungee text-lg md:text-xl lg:text-2xl font-bold">
-        Create Session
-      </h2>
-      <h5 className="text-black font-bungee text-base md:text-lg lg:text-xl font-semibold">
-        Create a playing session for your favourite instruments and invite other
-        musicians!
-      </h5>
+      {submitting && <LoadingWheel />}
+      <Instractions />
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          required
-          onChange={handleChange}
-          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px]"
-        />
-
-        <textarea
-          name="desc"
-          placeholder="Description"
-          required
-          onChange={handleChange}
-          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md mt-3"
-        />
-
+        <div className="relative">
+          <input
+            type="text"
+            name="title"
+            maxLength={150}
+            placeholder="Title"
+            required
+            onChange={handleChange}
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] pr-12"
+          />
+          <div
+            className={`absolute right-2 top-2 text-gray-500 text-sm ${
+              titleCharsLeft === 0 ? "text-red-600" : "text-gray-600"
+            }`}
+          >
+            {titleCharsLeft}/150
+          </div>
+        </div>
+        <div className="relative">
+          <textarea
+            name="desc"
+            placeholder="Description"
+            required
+            onChange={handleChange}
+            maxLength={400}
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md mt-3 pr-12"
+          />
+          <div
+            className={`absolute right-2 top-4 text-gray-500 text-sm ${
+              descCharsLeft === 0 ? "text-red-600" : "text-gray-600"
+            }`}
+          >
+            {descCharsLeft}/400
+          </div>
+        </div>
         <input
           type="date"
           name="date"
@@ -104,24 +210,51 @@ const SubmitForm = () => {
           onChange={handleChange}
           className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
         />
+        <div className="relative">
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            required
+            maxLength={200}
+            onChange={handleChange}
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 pr-12 "
+          />
+          <div
+            className={`absolute right-2 top-4 text-gray-500 text-sm ${
+              locationCharsLeft === 0 ? "text-red-600" : "text-gray-600"
+            }`}
+          >
+            {locationCharsLeft}/200
+          </div>
+        </div>
+        <div className="relative">
+          <input
+            type="text"
+            name="zip"
+            placeholder="Zip"
+            required
+            maxLength={5}
+            onChange={handleChange}
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
+          />
+          <div
+            className={`absolute right-2 top-4 text-gray-500 text-sm ${
+              zipCharsLeft === 0 ? "text-red-600" : "text-gray-600"
+            }`}
+          >
+            {zipCharsLeft}/5
+          </div>
+        </div>
         <input
-          type="text"
-          name="location"
-          placeholder="Location"
+          type="number"
+          name="phoneNumber"
+          placeholder="Phone Number"
           required
+          // maxLength={5}
           onChange={handleChange}
           className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
         />
-
-        <input
-          type="text"
-          name="zip"
-          placeholder="Zip"
-          required
-          onChange={handleChange}
-          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
-        />
-
         <select
           name="instrument"
           required
@@ -135,6 +268,12 @@ const SubmitForm = () => {
             <option key={item.id}>{item.name}</option>
           ))}
         </select>
+        <input
+          type="file"
+          accept="image/gif, image/jpeg, image/png"
+          className="bg-zinc-300 border border-black placeholder-black w-full p-1 rounded-md text-black mt-3"
+          onChange={handleFileChange}
+        />
         <button
           type="submit"
           className="bg-blue-700 hover:bg-blue-800 border border-black w-full rounded-md h-[35px] mt-3 text-white font-semibold"
@@ -142,8 +281,13 @@ const SubmitForm = () => {
           Submit
         </button>
       </form>
+      {postSucceed ? <Posted /> : null}
     </div>
   );
 };
 
 export default SubmitForm;
+
+function setSubmit(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}

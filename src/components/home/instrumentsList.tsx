@@ -15,14 +15,14 @@ const InstrumentsList = () => {
       {instrument.map((item: any) => (
         <div
           key={item.id}
-          className="cursor-pointer hover:animate-bounce transation-all duration-300"
+          className=" group cursor-pointer hover:animate-bounce transation-all duration-300 "
         >
           <img
             src={item.image}
             alt={item.name}
             className="w-[40px] h-[40px] md:w-[80px] md:h-[80px] lg:w-[120px] lg:h-[120px]"
           />
-          <h2 className="font-bold text-center text-gray-700 text-base md:text-xl lg:text-2xl pt-4">
+          <h2 className="font-bold text-center text-gray-700 text-base md:text-xl group-hover:text-blue-700 lg:text-2xl pt-4">
             {item.name}
           </h2>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PostItem from "./postItem";
 import Postmodal from "./postModal";
 import { Timestamp } from "firebase/firestore";
@@ -8,39 +8,46 @@ import { Timestamp } from "firebase/firestore";
 interface PostType {
   title: string;
   desc: string;
-  image: string;
+  imageUrl: string;
   date: Timestamp;
   location: string;
+  userImage: string;
+  userName: string;
+  userEmail: string;
+  postedTime: any;
 }
 
 const Post = ({ posts }: { posts: PostType[] }) => {
-  const [post, setPost] = useState(null);
+  const [uniquePost, setUniquePost] = useState(null);
 
-  useEffect(() => {
-    // console.log("Posts", posts);
-  }, [posts]);
-
-  const openModal = () => {
-    const dialog = document.getElementById("my_modal_2") as HTMLDialogElement;
-    if (dialog) {
-      dialog.showModal();
+  const getOrder = (date: any) => {
+    if (date instanceof Timestamp) {
+      return date.toDate().getTime(); // Firebase Timestamp
+    } else if (date instanceof Date) {
+      return date.getTime(); // JavaScript Date
+    } else if (typeof date === "string") {
+      return new Date(date).getTime(); // Date string
     }
+    return 0;
   };
+
+  const sortedPosts = [...posts]
+    .filter((post) => getOrder(post.date) > Date.now())
+    .toSorted((a, b) => getOrder(a.date) - getOrder(b.date));
 
   return (
     <div>
-      <Postmodal posts={post} />
+      <Postmodal uniquePost={uniquePost} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {posts.map((item, index) => (
+        {sortedPosts.map((item, index) => (
           <div
             key={index}
             onClick={() => {
-              openModal();
-              setPost(item);
+              setUniquePost(item);
             }}
           >
-            <PostItem post={item} />
+            <PostItem post={item} modal={true} />
           </div>
         ))}
       </div>
