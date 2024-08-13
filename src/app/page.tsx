@@ -83,9 +83,9 @@ export default function Home() {
       <main className="flex relative min-h-screen flex-col items-center justify-between">
         <Body />
         <SearchBar />
-
-        <InstrumentsList />
         <Categories />
+        <InstrumentsList />
+
         <Post posts={posts} />
         <Footer />
       </main>
