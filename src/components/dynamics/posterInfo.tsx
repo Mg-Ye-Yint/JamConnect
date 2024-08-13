@@ -7,6 +7,7 @@ interface UserType {
   userName: string;
   userEmail: string;
   postedTime: any;
+  phoneNumber: string;
 }
 
 function PosterInfo({ user }: { user: UserType }) {
@@ -33,12 +34,18 @@ function PosterInfo({ user }: { user: UserType }) {
             />
             <div className="flex flex-col items-start justify-start mb-2">
               <p className="text-white font-bold">{user?.userName}</p>
-              <a
-                className="text-white hover:underline hover:text-blue-700"
-                href={`mailto:${user?.userEmail}`}
-              >
-                {user?.userEmail}
-              </a>
+              <div className="flex flex-col md:flex-row items-start gap-3">
+                <a
+                  className="text-white hover:underline hover:text-blue-700"
+                  href={`mailto:${user?.userEmail}`}
+                >
+                  Email : {user?.userEmail}
+                </a>
+
+                <div className="flex flex-col md:flex-row items-start gap-3">
+                  <p className="text-white">Phone: {user?.phoneNumber}</p>
+                </div>
+              </div>
             </div>
           </div>
         ) : null}

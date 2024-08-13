@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import instruments from "../../../shared/data";
+import { instruments } from "../../../shared/data";
 import { useSession } from "next-auth/react";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import app from "../../../shared/firebase.config";
 import { Timestamp } from "firebase/firestore";
-import LoadingWheel from "./loadingWheel";
 import {
   getDownloadURL,
   getStorage,
@@ -14,8 +13,11 @@ import {
   uploadBytesResumable,
   UploadTaskSnapshot,
 } from "firebase/storage";
-import Posted from "./posted";
 import Instractions from "./instructions";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import Finished from "../statics/finished";
+import LoadingWheel from "../statics/wheel";
 
 interface InputState {
   title?: string;
@@ -28,6 +30,7 @@ interface InputState {
   userImage?: string;
   userEmail?: string;
   image?: string;
+  phoneNumber?: string;
 }
 
 const SubmitForm = () => {
@@ -42,8 +45,8 @@ const SubmitForm = () => {
   const [descCharsLeft, setDescCharsLeft] = useState(400);
   const [locationCharsLeft, setLocationCharsLeft] = useState(200);
   const [zipCharsLeft, setZipCharsLeft] = useState(5);
-  const [postTimeout, setPostTimeout] = useState<NodeJS.Timeout | null>(null);
   const [postSucceed, setPostSucceed] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const capitalizeFirstLetter = (str: any) => {
     return str.trim().charAt(0).toUpperCase() + str.trim().slice(1);
@@ -117,6 +120,7 @@ const SubmitForm = () => {
           date: timestamp,
           imageUrl,
           postedTime,
+          phoneNumber,
         };
 
         await setDoc(doc(db, "posts", Date.now().toString()), dataToSave);
@@ -165,9 +169,9 @@ const SubmitForm = () => {
 
   return (
     <div className=" flex flex-col  justify-center m-3 gap-y-3">
-      {submitting && <LoadingWheel />}
+      {submitting && <LoadingWheel text={"Loading..."} />}
       <Instractions />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="animate-myPulse">
         <div className="relative">
           <input
             type="text"
@@ -176,7 +180,7 @@ const SubmitForm = () => {
             placeholder="Title"
             required
             onChange={handleChange}
-            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] pr-12"
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] pr-14 md:pr-12"
           />
           <div
             className={`absolute right-2 top-2 text-gray-500 text-sm ${
@@ -193,7 +197,7 @@ const SubmitForm = () => {
             required
             onChange={handleChange}
             maxLength={400}
-            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md mt-3 pr-12"
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md mt-3 pr-14 md:pr-12"
           />
           <div
             className={`absolute right-2 top-4 text-gray-500 text-sm ${
@@ -218,7 +222,7 @@ const SubmitForm = () => {
             required
             maxLength={200}
             onChange={handleChange}
-            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 pr-12 "
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 pr-14 md:pr-12 "
           />
           <div
             className={`absolute right-2 top-4 text-gray-500 text-sm ${
@@ -246,15 +250,32 @@ const SubmitForm = () => {
             {zipCharsLeft}/5
           </div>
         </div>
-        <input
-          type="number"
-          name="phoneNumber"
-          placeholder="Phone Number"
-          required
-          // maxLength={5}
-          onChange={handleChange}
-          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
-        />
+        <div className="relative">
+          <PhoneInput
+            country={"us"}
+            value={phoneNumber}
+            onChange={(phone) => setPhoneNumber(phone)}
+            containerStyle={{
+              width: "100%",
+              marginTop: "12px",
+            }}
+            inputStyle={{
+              backgroundColor: "#D4D4D4",
+              border: "1px solid black",
+              width: "100%",
+              borderRadius: "8px",
+              height: "35px",
+            }}
+            buttonStyle={{
+              border: "1px solid black",
+              borderRadius: "8px",
+              backgroundColor: "#D4D4D4",
+            }}
+          />
+          <div className="absolute right-2 top-2 text-gray-500 text-sm ">
+            Phone Number
+          </div>
+        </div>
         <select
           name="instrument"
           required
@@ -281,7 +302,7 @@ const SubmitForm = () => {
           Submit
         </button>
       </form>
-      {postSucceed ? <Posted /> : null}
+      {postSucceed ? <Finished text={"Posted"} /> : null}
     </div>
   );
 };

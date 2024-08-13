@@ -1,4 +1,5 @@
 import create from "zustand";
+import { languageOptions } from "../shared/data";
 
 
 interface AttemptState  {
@@ -21,3 +22,45 @@ export const modalStore = create<ModalState>((set)=>({
  modal: false,
  setModal: (value) => set({modal: value}),
 }))
+
+interface chooseLanguageState  {
+    chooseLanguage: boolean;
+    setChooseLanguage: (value: boolean) => void;
+};
+
+export const chooseLanguageStore = create<chooseLanguageState>((set)=>({
+    chooseLanguage: false,
+    setChooseLanguage: (value) => set({chooseLanguage: value}),
+}))
+
+interface InitialDeleteState {
+    initialDelete: boolean;
+    setInitialDelete: (value: boolean) => void;
+    postIdToDelete: string | null;
+    setPostIdToDelete: (id: string | null) => void;
+  }
+  
+  export const initialDeleteStore = create<InitialDeleteState>((set) => ({
+    initialDelete: false,
+    setInitialDelete: (value) => set({ initialDelete: value }),
+    postIdToDelete: null,
+    setPostIdToDelete: (id) => set({ postIdToDelete: id }),
+  }));
+
+  type LanguageOption = {
+    code: string;
+    label: string;
+    flag: string;
+  };
+  
+  type LanguageState = {
+    selectedLanguage: LanguageOption;
+    setSelectedLanguage: (language: LanguageOption) => void;
+    languageOptions: LanguageOption[];
+  };
+  
+  export const useLanguageStore = create<LanguageState>((set) => ({
+    selectedLanguage: languageOptions[0], 
+    setSelectedLanguage: (language) => set({ selectedLanguage: language }),
+    languageOptions: languageOptions, 
+  }));

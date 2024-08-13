@@ -3,8 +3,7 @@ import React from "react";
 import { HiX } from "react-icons/hi";
 
 const LoginRequest = () => {
-  const { loginAttempt, setLoginAttempt } = attemptStore((state) => ({
-    loginAttempt: state.loginAttempt,
+  const { setLoginAttempt } = attemptStore((state) => ({
     setLoginAttempt: state.setLoginAttempt,
   }));
   return (

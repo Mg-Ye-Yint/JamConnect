@@ -11,10 +11,10 @@ const SearchBar = () => {
   };
 
   return (
-    <form className="max-w-md mx-auto pt-10">
+    <form className="max-w-md mx-auto pt-10 animate-myPulse">
       <label
         htmlFor="default-search"
-        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white shadow-realistic"
       >
         Search
       </label>

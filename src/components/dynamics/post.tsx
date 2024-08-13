@@ -6,6 +6,7 @@ import Postmodal from "./postModal";
 import { Timestamp } from "firebase/firestore";
 
 interface PostType {
+  id: string;
   title: string;
   desc: string;
   imageUrl: string;
@@ -15,6 +16,7 @@ interface PostType {
   userName: string;
   userEmail: string;
   postedTime: any;
+  phoneNumber: string;
 }
 
 const Post = ({ posts }: { posts: PostType[] }) => {
@@ -39,7 +41,7 @@ const Post = ({ posts }: { posts: PostType[] }) => {
     <div>
       <Postmodal uniquePost={uniquePost} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-myPulse">
         {sortedPosts.map((item, index) => (
           <div
             key={index}
@@ -47,7 +49,7 @@ const Post = ({ posts }: { posts: PostType[] }) => {
               setUniquePost(item);
             }}
           >
-            <PostItem post={item} modal={true} />
+            <PostItem post={item} modal={true} manage={false} />
           </div>
         ))}
       </div>

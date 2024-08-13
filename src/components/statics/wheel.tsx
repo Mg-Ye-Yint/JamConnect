@@ -1,12 +1,12 @@
 import React from "react";
 
-const LoadingWheel = () => {
+const LoadingWheel = ({ text }: { text: string }) => {
   return (
-    <div className="fixed inset-0 flex bg-black bg-opacity-50 justify-center items-center z-20">
+    <div className="fixed inset-0 flex bg-black bg-opacity-50 justify-center items-center z-50">
       <div role="status">
         <svg
           aria-hidden="true"
-          className="w-24 h-24 text-gray-200 animate-spin dark:text-gray-600 fill-blue-700"
+          className={`w-24 h-24 text-gray-200 animate-spin dark:text-gray-600 fill-blue-500`}
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +20,7 @@ const LoadingWheel = () => {
             fill="currentFill"
           />
         </svg>
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">{text}</span>
       </div>
     </div>
   );

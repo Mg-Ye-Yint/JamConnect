@@ -1,9 +1,8 @@
 "use client";
 
 import Footer from "@/components/footer";
-import Body from "@/components/home/body";
-import InstrumentsList from "@/components/home/instrumentsList";
-import SearchBar from "@/components/home/searchBar";
+
+import InstrumentsList from "@/components/dynamics/instrumentsList";
 import app from "../../shared/firebase.config";
 import {
   collection,
@@ -12,9 +11,15 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import Post from "@/components/home/post";
+import Post from "@/components/dynamics/post";
+import LanguageOptions from "@/components/dynamics/languageOptions";
+import { chooseLanguageStore } from "@/store";
+import Categories from "@/components/dynamics/catagories";
+import Body from "@/components/statics/body";
+import SearchBar from "@/components/dynamics/searchBar";
 
 interface Post {
+  id: string;
   title: string;
   desc: string;
   imageUrl: string;
@@ -24,6 +29,7 @@ interface Post {
   userImage: string;
   userName: string;
   postedTime: Timestamp;
+  phoneNumber: string;
 }
 
 export default function Home() {
@@ -35,8 +41,6 @@ export default function Home() {
     getPost();
   }, []);
 
-  console.log(posts);
-
   const getPost = async () => {
     const querySnapshot = await getDocs(collection(db, "posts")); //app သိမ်းထားတဲ့ variable ကို getDocs function                                                      သုံးပြီးပေးထားတဲ့ dataBase နာမည်အတိုင်းရှာတယ်
     querySnapshot.forEach((doc) => {
@@ -45,6 +49,7 @@ export default function Home() {
     const postsData: Post[] = querySnapshot.docs.map(
       (doc) =>
         ({
+          id: doc.id,
           title: doc.data().title,
           desc: doc.data().desc,
           imageUrl: doc.data().imageUrl,
@@ -53,6 +58,7 @@ export default function Home() {
           userEmail: doc.data().userEmail,
           userImage: doc.data().userImage,
           userName: doc.data().userName,
+          phoneNumber: doc.data().phoneNumber,
           postedTime:
             doc.data().postedTime === undefined
               ? ""
@@ -62,13 +68,27 @@ export default function Home() {
     setPosts(postsData);
   };
 
+  console.log(posts);
+
+  const { chooseLanguages } = chooseLanguageStore((state) => ({
+    chooseLanguages: state.chooseLanguage,
+  }));
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between">
-      <Body />
-      <SearchBar />
-      <InstrumentsList />
-      <Post posts={posts} />
-      <Footer />
-    </main>
+    <>
+      <div className="w-full h-[20px] p-1">
+        {chooseLanguages ? <LanguageOptions /> : null}
+      </div>
+
+      <main className="flex relative min-h-screen flex-col items-center justify-between">
+        <Body />
+        <SearchBar />
+
+        <InstrumentsList />
+        <Categories />
+        <Post posts={posts} />
+        <Footer />
+      </main>
+    </>
   );
 }
