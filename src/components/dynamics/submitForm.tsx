@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { instruments } from "../../../shared/data";
+import { instruments, payment, levels } from "../../../shared/data";
 import { useSession } from "next-auth/react";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import app from "../../../shared/firebase.config";
@@ -13,11 +13,12 @@ import {
   uploadBytesResumable,
   UploadTaskSnapshot,
 } from "firebase/storage";
-import Instractions from "./instructions";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Finished from "../statics/finished";
 import LoadingWheel from "../statics/wheel";
+import Instructions from "../statics/instructions";
+import { useRouter } from "next/navigation";
 
 interface InputState {
   title?: string;
@@ -40,7 +41,7 @@ const SubmitForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const db = getFirestore(app);
-  const storage = getStorage(app); //ဓာတ်ပုံထည့်ချင်ရင်လိုအပ်တယ်
+  const storage = getStorage(app);
   const [titleCharsLeft, setTitleCharsLeft] = useState(150);
   const [descCharsLeft, setDescCharsLeft] = useState(400);
   const [locationCharsLeft, setLocationCharsLeft] = useState(200);
@@ -51,6 +52,18 @@ const SubmitForm = () => {
   const capitalizeFirstLetter = (str: any) => {
     return str.trim().charAt(0).toUpperCase() + str.trim().slice(1);
   };
+
+  const CharCount = ({ left, max }: { left: number; max: number }) => (
+    <div
+      className={`absolute right-2 top-3 text-gray-500 text-sm ${
+        left === 0 ? "text-red-600" : "text-gray-600"
+      }`}
+    >
+      {left}/{max}
+    </div>
+  );
+
+  const router = useRouter();
 
   useEffect(() => {
     if (session && session.user) {
@@ -67,6 +80,34 @@ const SubmitForm = () => {
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
     }
+  };
+
+  const handleChange = (e: any) => {
+    const { name, value, maxLength } = e.target;
+
+    if (maxLength) {
+      switch (name) {
+        case "title":
+          setTitleCharsLeft(maxLength - value.length);
+          break;
+        case "desc":
+          setDescCharsLeft(maxLength - value.length);
+          break;
+        case "location":
+          setLocationCharsLeft(maxLength - value.length);
+          break;
+        case "zip":
+          setZipCharsLeft(maxLength - value.length);
+          break;
+        default:
+          break;
+      }
+    }
+
+    setInput((values) => ({
+      ...values,
+      [name]: capitalizeFirstLetter(value.trim()),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -135,42 +176,28 @@ const SubmitForm = () => {
           setPostSucceed(false);
         }, 3000);
         setTimeout(() => {
-          window.location.reload();
+          router.push("/");
         }, 1000);
       }
     }
   };
 
-  const handleChange = (e: any) => {
-    const name = e.target.name;
-    const value = e.target.value;
-
-    if (name === "title") {
-      setTitleCharsLeft(150 - value.length);
+  <style jsx>{`
+    .responsive-select {
+      font-size: 0.875rem;
     }
 
-    if (name === "desc") {
-      setDescCharsLeft(400 - value.length);
+    @media (min-width: 768px) {
+      .responsive-select {
+        font-size: 1rem;
+      }
     }
-
-    if (name === "location") {
-      setLocationCharsLeft(200 - value.length);
-    }
-
-    if (name === "zip") {
-      setZipCharsLeft(5 - value.length);
-    }
-
-    setInput((values) => ({
-      ...values,
-      [name]: capitalizeFirstLetter(value.trim()),
-    }));
-  };
+  `}</style>;
 
   return (
     <div className=" flex flex-col  justify-center m-3 gap-y-3">
       {submitting && <LoadingWheel text={"Loading..."} />}
-      <Instractions />
+      <Instructions />
       <form onSubmit={handleSubmit} className="animate-myPulse">
         <div className="relative">
           <input
@@ -182,13 +209,7 @@ const SubmitForm = () => {
             onChange={handleChange}
             className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] pr-14 md:pr-12"
           />
-          <div
-            className={`absolute right-2 top-2 text-gray-500 text-sm ${
-              titleCharsLeft === 0 ? "text-red-600" : "text-gray-600"
-            }`}
-          >
-            {titleCharsLeft}/150
-          </div>
+          <CharCount left={titleCharsLeft} max={150} />
         </div>
         <div className="relative">
           <textarea
@@ -199,21 +220,24 @@ const SubmitForm = () => {
             maxLength={400}
             className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md mt-3 pr-14 md:pr-12"
           />
-          <div
-            className={`absolute right-2 top-4 text-gray-500 text-sm ${
-              descCharsLeft === 0 ? "text-red-600" : "text-gray-600"
-            }`}
-          >
-            {descCharsLeft}/400
-          </div>
+          <CharCount left={descCharsLeft} max={400} />
         </div>
-        <input
-          type="date"
-          name="date"
-          required
-          onChange={handleChange}
-          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
-        />
+        <div className="flex gap-2">
+          <input
+            type="date"
+            name="date"
+            required
+            onChange={handleChange}
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
+          />
+          <input
+            type="time"
+            name="time"
+            required
+            onChange={handleChange}
+            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
+          />
+        </div>
         <div className="relative">
           <input
             type="text"
@@ -224,32 +248,56 @@ const SubmitForm = () => {
             onChange={handleChange}
             className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 pr-14 md:pr-12 "
           />
-          <div
-            className={`absolute right-2 top-4 text-gray-500 text-sm ${
-              locationCharsLeft === 0 ? "text-red-600" : "text-gray-600"
-            }`}
-          >
-            {locationCharsLeft}/200
-          </div>
+          <CharCount left={locationCharsLeft} max={200} />
         </div>
-        <div className="relative">
-          <input
-            type="text"
-            name="zip"
-            placeholder="Zip"
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type="number"
+              name="experience"
+              placeholder="Experience"
+              required
+              min={0}
+              step={0.5}
+              onChange={handleChange}
+              className="bg-zinc-300 border border-black placeholder:text-sm md:placeholder:text-base placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
+            />
+            <div className="absolute left-24 top-5 text-gray-500 text-sm md:text-base hidden sm:block">
+              Years
+            </div>
+          </div>
+          <select
+            name="paymentStatus"
             required
-            maxLength={5}
             onChange={handleChange}
-            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
-          />
-          <div
-            className={`absolute right-2 top-4 text-gray-500 text-sm ${
-              zipCharsLeft === 0 ? "text-red-600" : "text-gray-600"
-            }`}
+            className=" flex-1 bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 text-sm md:text-base"
           >
-            {zipCharsLeft}/5
-          </div>
+            <option value="" disabled selected className="text-xs md:text-base">
+              Payment Status
+            </option>
+            {payment.map((item) => (
+              <option key={item.id} className="text-sm md:text-base">
+                {item.paymentStatus}
+              </option>
+            ))}
+          </select>
+          <select
+            name="level"
+            required
+            onChange={handleChange}
+            className=" flex-1 bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 text-sm md:text-base"
+          >
+            <option value="" disabled selected className="text-sm md:text-base">
+              Level
+            </option>
+            {levels.map((item) => (
+              <option key={item.id} className="text-sm md:text-base">
+                {item.level}
+              </option>
+            ))}
+          </select>
         </div>
+
         <div className="relative">
           <PhoneInput
             country={"us"}
@@ -282,11 +330,11 @@ const SubmitForm = () => {
           onChange={handleChange}
           className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
         >
-          <option value="" disabled>
-            Select an instrument
+          <option value="" disabled selected>
+            Type of player
           </option>
           {instruments.map((item) => (
-            <option key={item.id}>{item.name}</option>
+            <option key={item.id}>{item.profession}</option>
           ))}
         </select>
         <input

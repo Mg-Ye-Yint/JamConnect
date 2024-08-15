@@ -3,20 +3,34 @@
 import React, { useEffect, useState } from "react";
 import { instruments } from "../../../shared/data";
 import { usePathname } from "next/navigation";
+import { useInstrumentListStore } from "@/store";
 
 const InstrumentsList = () => {
   const [instrument, setInstrument] = useState([]);
+
   const [selectedInstrument, setSelectedInstrument] = useState("All");
+
+  const { selectedProfession, setSelectedProfession } = useInstrumentListStore(
+    (state) => ({
+      selectedProfession: state.selectedProfession,
+      setSelectedProfession: state.setSelectedProfession,
+    })
+  );
 
   useEffect(() => {
     setInstrument(instruments);
   }, []);
 
-  const instrumentChoose = (name: string) => {
+  const instrumentChoose = (name: string, profession: string) => {
     setSelectedInstrument(name);
+    setSelectedProfession(profession);
   };
 
+  console.log(selectedInstrument);
+
   const pathname = usePathname();
+
+  console.log(selectedProfession);
 
   return (
     <div
@@ -29,7 +43,7 @@ const InstrumentsList = () => {
       {instrument.map((item: any) => (
         <div
           key={item.id}
-          onClick={() => instrumentChoose(item.name)}
+          onClick={() => instrumentChoose(item.name, item.profession)}
           className={`flex flex-col justify-center items-center rounded-md group cursor-pointer hover:animate-bounce transition-all duration-300 ${
             selectedInstrument === item.name
               ? "bg-gradient-to-b from-yellow-300 to-green-300"

@@ -2,7 +2,7 @@
 
 import { initialDeleteStore } from "@/store";
 import DeleteConfirm from "./deleteConfirm";
-import PostItem from "./postItem";
+import PostItem from "./sessionPostItem";
 import {
   collection,
   deleteDoc,

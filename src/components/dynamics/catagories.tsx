@@ -1,9 +1,14 @@
 "use client";
 
+import { activeTabStore } from "@/store";
 import React, { useState } from "react";
 
 const Categories = () => {
-  const [activeTab, setActiveTab] = useState("band");
+  const { activeTab, setActiveTab } = activeTabStore((state) => ({
+    activeTab: state.activeTab,
+    setActiveTab: state.setActiveTab,
+  }));
+
   const [isDelayed, setIsDelayed] = useState(false);
 
   const tabChoose = (tab) => {
@@ -25,7 +30,7 @@ const Categories = () => {
         onClick={() => tabChoose("band")}
       >
         <p className="text-white group-hover:text-gray-100 font-ubuntu font-semibold text-base md:text-lg lg:text-xl">
-          Band Recircuitments
+          Band Recruitment
         </p>
       </div>
       <div className="w-[2px] bg-white h-full"></div>
@@ -38,7 +43,7 @@ const Categories = () => {
         onClick={() => tabChoose("sessions")}
       >
         <p className="text-white group-hover:text-gray-100 font-ubuntu font-semibold  text-base md:text-lg lg:text-xl">
-          Session Recircuitment
+          Session Recruitment
         </p>
       </div>
       <div

@@ -64,3 +64,23 @@ interface InitialDeleteState {
     setSelectedLanguage: (language) => set({ selectedLanguage: language }),
     languageOptions: languageOptions, 
   }));
+
+  type ActiveTabType = {
+    activeTab: string
+    setActiveTab: (value: string) => void;
+  }
+
+  export const activeTabStore = create<ActiveTabType>((set)=>({
+    activeTab: "band",
+    setActiveTab: (value) => set({activeTab: value})
+  }))
+
+  type ProfessionType = {
+    selectedProfession: string
+    setSelectedProfession: (value: string) => void;
+  }
+
+  export const useInstrumentListStore = create<ProfessionType>((set)=>({
+    selectedProfession: "All",
+    setSelectedProfession: (value: string) => set({selectedProfession: value})
+  }))

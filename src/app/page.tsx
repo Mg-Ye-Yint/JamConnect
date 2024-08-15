@@ -1,6 +1,6 @@
 "use client";
 
-import Footer from "@/components/footer";
+import Footer from "@/components/wrappers/footer";
 
 import InstrumentsList from "@/components/dynamics/instrumentsList";
 import app from "../../shared/firebase.config";
@@ -11,31 +11,39 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import Post from "@/components/dynamics/post";
+
 import LanguageOptions from "@/components/dynamics/languageOptions";
-import { chooseLanguageStore } from "@/store";
+import { activeTabStore, attemptStore, chooseLanguageStore } from "@/store";
 import Categories from "@/components/dynamics/catagories";
 import Body from "@/components/statics/body";
 import SearchBar from "@/components/dynamics/searchBar";
+import LoginRequest from "@/components/dynamics/loginRequest";
+import SessionPost from "@/components/dynamics/sessionPost";
+import Plain from "@/components/statics/plain";
 
-interface Post {
+interface SessionPostType {
   id: string;
   title: string;
   desc: string;
   imageUrl: string;
   date: Timestamp;
+  time: string;
+  experience: string;
+  level: string;
+  paymentStatus: string;
   location: string;
   userEmail: string;
   userImage: string;
   userName: string;
   postedTime: Timestamp;
   phoneNumber: string;
+  instrument: string;
 }
 
 export default function Home() {
   const db = getFirestore(app); // original firebase provided code မှာပါတဲ့ app ကို getFireStore နဲ့ပြန်ယူလိုက်တယ်
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [sessionPosts, setSessionPosts] = useState<SessionPostType[]>([]);
 
   useEffect(() => {
     getPost();
@@ -46,7 +54,7 @@ export default function Home() {
     querySnapshot.forEach((doc) => {
       // console.log(doc.id, " => ", doc.data());
     });
-    const postsData: Post[] = querySnapshot.docs.map(
+    const postsData: SessionPostType[] = querySnapshot.docs.map(
       (doc) =>
         ({
           id: doc.id,
@@ -54,24 +62,37 @@ export default function Home() {
           desc: doc.data().desc,
           imageUrl: doc.data().imageUrl,
           date: doc.data().date === undefined ? "" : doc.data().date.toDate(),
+          time: doc.data().time,
           location: doc.data().location,
           userEmail: doc.data().userEmail,
           userImage: doc.data().userImage,
           userName: doc.data().userName,
           phoneNumber: doc.data().phoneNumber,
+          experience: doc.data().experience,
+          level: doc.data().level,
+          paymentStatus: doc.data().paymentStatus,
+          instrument: doc.data().instrument,
           postedTime:
             doc.data().postedTime === undefined
               ? ""
               : doc.data().postedTime.toDate(),
-        } as Post)
+        } as SessionPostType)
     );
-    setPosts(postsData);
+    setSessionPosts(postsData);
   };
 
-  console.log(posts);
+  console.log(sessionPosts);
+
+  const { loginAttempt } = attemptStore((state) => ({
+    loginAttempt: state.loginAttempt,
+  }));
 
   const { chooseLanguages } = chooseLanguageStore((state) => ({
     chooseLanguages: state.chooseLanguage,
+  }));
+
+  const { activeTab } = activeTabStore((state) => ({
+    activeTab: state.activeTab,
   }));
 
   return (
@@ -80,13 +101,16 @@ export default function Home() {
         {chooseLanguages ? <LanguageOptions /> : null}
       </div>
 
+      {loginAttempt ? <LoginRequest /> : null}
+
       <main className="flex relative min-h-screen flex-col items-center justify-between">
         <Body />
         <SearchBar />
-        <Categories />
-        <InstrumentsList />
 
-        <Post posts={posts} />
+        <InstrumentsList />
+        <Categories />
+        {activeTab === "sessions" ? <SessionPost posts={sessionPosts} /> : null}
+        {activeTab === "band" ? <Plain /> : null}
         <Footer />
       </main>
     </>

@@ -5,24 +5,36 @@ import {
   HiOutlineLocationMarker,
   HiOutlineClock,
 } from "react-icons/hi";
+import MusicianInfo from "./musicianInfo";
 
-const MusicianProfile = ({
-  name,
-  age,
-  profession,
-  location,
-  experience,
-}: {
+interface MusicianTypes {
+  id: number;
   name: string;
-  age: string;
   profession: string;
   location: string;
+  photo: string;
+  age: string;
   experience: string;
+}
+
+const MusicianProfile = ({
+  musician,
+  choosen = false,
+}: {
+  musician: MusicianTypes;
+  choosen: boolean;
 }) => {
+  const openModal = () => {
+    const dialog = document.getElementById("my_modal_2") as HTMLDialogElement;
+    if (dialog) {
+      dialog.showModal();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-start lg:w-[350px] md:-[350px] h-[150px] bg-gray-700 m-3 p-2 rounded-lg shadow-deep animate-myPulse ">
       <p className="text-white font-gugi overflow-hidden text-ellipsis max-w-full text-sm md:text-base ">
-        {name}
+        {musician.name}
       </p>
       <div className="w-full flex items-center justify-start gap-3">
         <div className="flex flex-col gap-2 h-full box-border w-full">
@@ -36,13 +48,13 @@ const MusicianProfile = ({
           <div className="flex items-center">
             <HiOutlineCake className="inline-block mr-2 text-amber-400" />
             <p className="text-white font-gugi font-semibold overflow-hidden text-ellipsis max-w-[100px] text-sm md:text-base ">
-              {age}
+              {musician.age}
             </p>
           </div>
           <div className="flex items-center">
             <HiOutlineBriefcase className="inline-block mr-2 text-amber-400" />
             <p className="text-white font-gugi font-semibold  overflow-hidden text-ellipsis max-w-[100px] text-sm md:text-base ">
-              {profession}
+              {musician.profession}
             </p>
           </div>
         </div>
@@ -50,18 +62,24 @@ const MusicianProfile = ({
           <div className="flex items-center">
             <HiOutlineClock className="inline-block mr-2 text-amber-400" />
             <p className="text-white font-gugi font-semibold  overflow-hidden text-ellipsis max-w-[100px] tetext-sm md:text-base ">
-              {experience}
+              {musician.experience} years
             </p>
           </div>
           <div className="flex items-center">
             <HiOutlineLocationMarker className="inline-block mr-2 text-amber-400 " />
             <p className="text-white font-gugi font-semibold overflow-hidden text-ellipsis max-w-[100px] text-sm md:text-base ">
-              {location}
+              {musician.location}
             </p>
           </div>
         </div>
       </div>
-      <a className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 cursor-pointer  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+
+      {!choosen ? <MusicianInfo /> : null}
+
+      <a
+        className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 cursor-pointer  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+        onClick={() => openModal()}
+      >
         About
         <svg
           className="rtl:rotate-180 w-3.5 h-3.5 ms-2"

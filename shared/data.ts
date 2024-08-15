@@ -1,16 +1,16 @@
 export const instruments = [
-    { id: 1, name: "All", image: "/all.png" },
-    { id: 2, name: "Vocal", image: "/vocal.png" },
-    { id: 3, name: "Lead Guitar", image: "/lead.png" },
-    { id: 4, name: "Bass Guitar", image: "/bass.png" },
-    { id: 5, name: "Drum", image: "/drum.png" },
-    { id: 6, name: "Piano", image: "/keyboard.png" },
-    { id: 7, name: "Cajon", image: "/cajon.png" },
-    { id: 8, name: "Violin", image: "/violin.png" },
-    { id: 9, name: "Percussion", image: "/percussion.png" },
-    { id: 10, name: "Ukulele", image: "/ukulele.png" },
-    { id: 11, name: "DJ", image: "/dj.png" },
-    { id: 12, name: "others", image: "/others.png" },
+    { id: 1, name: "All", profession: "All", image: "/all.png" },
+    { id: 2, name: "Vocal", profession: "Vocalist", image: "/vocal.png" },
+    { id: 3, name: "Lead Guitar", profession: "Lead Guitarist", image: "/lead.png" },
+    { id: 4, name: "Bass Guitar", profession: "Bass Guitarist", image: "/bass.png" },
+    { id: 5, name: "Drum", profession: "Drummer", image: "/drum.png" },
+    { id: 6, name: "Piano", profession: "Pianist", image: "/keyboard.png" },
+    { id: 7, name: "Cajon", profession: "Cajonist", image: "/cajon.png" },
+    { id: 8, name: "Violin", profession: "Violinist", image: "/violin.png" },
+    { id: 9, name: "Percussion", profession: "Percussionist", image: "/percussion.png" },
+    { id: 10, name: "Ukulele", profession: "Ukulele Player", image: "/ukulele.png" },
+    { id: 11, name: "DJ", profession: "DJ", image: "/dj.png" },
+    { id: 12, name: "Others", profession: "Others", image: "/others.png" },
 ];
 
 export const languageOptions = [
@@ -27,3 +27,18 @@ export const musicians = [
     { id: 5, name: "Yee Yee", profession: "Vocalist", location: "Mandalay", photo: "/sample-profile.jpg", age: "25", experience: "2 years"},
     { id: 6, name: "Ko Aung", profession: "Drummer", location: "Taunggyi", photo: "/sample-profile.jpg", age: "31", experience: "10 years" },
 ];
+
+export const postTypes = [
+    {id: 1, title: "Band Recruitment", description: "Find and recruit permanent members for your band, ensuring long-term collaboration and commitment.", src: "/band-recruit.webp"},
+    {id: 2, title: "Session Recruitment", description: "Invite musicians for casual jamming sessions, whether for fun, practice, or exploring new musical collaborations.", src: "/session-recruit.webp"},
+]
+
+export const payment = [
+    {id: 1, paymentStatus: "Pay"},
+    {id: 2, paymentStatus: "Unpay"},
+]
+
+export const levels = [
+    {id: 1, level: "Amature"},
+    {id: 2, level: "Professional"},
+]

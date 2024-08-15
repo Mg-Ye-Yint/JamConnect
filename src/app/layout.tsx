@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Ubuntu, Bungee_Shade, Gugi, Archivo_Black } from "next/font/google";
 import "./globals.css";
-import SessionWrapper from "@/components/sessionWrapper";
-import Header from "@/components/header";
+import SessionWrapper from "@/components/wrappers/sessionWrapper";
+import Header from "@/components/wrappers/header";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
