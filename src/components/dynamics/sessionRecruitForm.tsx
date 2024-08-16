@@ -16,16 +16,16 @@ import {
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Finished from "../statics/finished";
-import LoadingWheel from "../statics/wheel";
-import Instructions from "../statics/instructions";
+
 import { useRouter } from "next/navigation";
+import SessionRecruitInstructions from "../statics/sessionRecruitInstructions";
+import LoadingWheel from "../statics/loadingWheel";
 
 interface InputState {
   title?: string;
   desc?: string;
   date?: Date;
   location?: string;
-  zip?: string;
   instrument?: string;
   userName?: string;
   userImage?: string;
@@ -34,9 +34,8 @@ interface InputState {
   phoneNumber?: string;
 }
 
-const SubmitForm = () => {
+const SessionRecruitForm = () => {
   const { data: session } = useSession();
-
   const [input, setInput] = useState<InputState>({});
   const [submitting, setSubmitting] = useState(false);
   const [image, setImage] = useState<File | null>(null);
@@ -45,9 +44,13 @@ const SubmitForm = () => {
   const [titleCharsLeft, setTitleCharsLeft] = useState(150);
   const [descCharsLeft, setDescCharsLeft] = useState(400);
   const [locationCharsLeft, setLocationCharsLeft] = useState(200);
-  const [zipCharsLeft, setZipCharsLeft] = useState(5);
+  const [otherDescriptionCharsLeft, setOtherDescriptionCharsLeft] =
+    useState(50);
+
   const [postSucceed, setPostSucceed] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [showOthersInput, setShowOthersInput] = useState(false);
+  const [othersDescription, setOthersDescription] = useState("");
 
   const capitalizeFirstLetter = (str: any) => {
     return str.trim().charAt(0).toUpperCase() + str.trim().slice(1);
@@ -85,6 +88,15 @@ const SubmitForm = () => {
   const handleChange = (e: any) => {
     const { name, value, maxLength } = e.target;
 
+    if (name === "instrument") {
+      if (value === "Others") {
+        setShowOthersInput(true);
+      } else {
+        setShowOthersInput(false);
+        setOthersDescription("");
+      }
+    }
+
     if (maxLength) {
       switch (name) {
         case "title":
@@ -96,9 +108,8 @@ const SubmitForm = () => {
         case "location":
           setLocationCharsLeft(maxLength - value.length);
           break;
-        case "zip":
-          setZipCharsLeft(maxLength - value.length);
-          break;
+        case "othersDescription":
+          setOtherDescriptionCharsLeft(maxLength - value.length);
         default:
           break;
       }
@@ -162,10 +173,10 @@ const SubmitForm = () => {
           imageUrl,
           postedTime,
           phoneNumber,
+          ...(showOthersInput && { othersDescription }),
         };
 
         await setDoc(doc(db, "posts", Date.now().toString()), dataToSave);
-        // window.location.reload();
       } catch (error) {
         console.log("Error", error);
         window.alert("Failed to create event.");
@@ -182,22 +193,10 @@ const SubmitForm = () => {
     }
   };
 
-  <style jsx>{`
-    .responsive-select {
-      font-size: 0.875rem;
-    }
-
-    @media (min-width: 768px) {
-      .responsive-select {
-        font-size: 1rem;
-      }
-    }
-  `}</style>;
-
   return (
     <div className=" flex flex-col  justify-center m-3 gap-y-3">
       {submitting && <LoadingWheel text={"Loading..."} />}
-      <Instructions />
+      <SessionRecruitInstructions />
       <form onSubmit={handleSubmit} className="animate-myPulse">
         <div className="relative">
           <input
@@ -337,6 +336,21 @@ const SubmitForm = () => {
             <option key={item.id}>{item.profession}</option>
           ))}
         </select>
+        {showOthersInput && (
+          <div className="relative">
+            <input
+              type="text"
+              name="othersDescription"
+              required
+              placeholder="Describe the type of player"
+              maxLength={50}
+              onChange={(e) => setOthersDescription(e.target.value)}
+              value={othersDescription}
+              className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
+            />{" "}
+            <CharCount left={otherDescriptionCharsLeft} max={50} />
+          </div>
+        )}
         <input
           type="file"
           accept="image/gif, image/jpeg, image/png"
@@ -355,7 +369,7 @@ const SubmitForm = () => {
   );
 };
 
-export default SubmitForm;
+export default SessionRecruitForm;
 
 function setSubmit(arg0: boolean) {
   throw new Error("Function not implemented.");

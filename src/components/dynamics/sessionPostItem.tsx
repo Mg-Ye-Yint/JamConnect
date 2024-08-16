@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   HiOutlineCalendar,
   HiOutlineLocationMarker,
@@ -24,6 +24,7 @@ interface SessionPostType {
   level: string;
   paymentStatus: string;
   instrument: string;
+  othersDescription: string;
 }
 
 const SessionPostItem = ({
@@ -35,6 +36,17 @@ const SessionPostItem = ({
   modal: boolean;
   manage: boolean;
 }) => {
+  const { setInitialDelete, setPostIdToDelete } = initialDeleteStore(
+    (state) => ({
+      setInitialDelete: state.setInitialDelete,
+      setPostIdToDelete: state.setPostIdToDelete,
+    })
+  );
+
+  const [showFullText, setShowFullText] = useState(false);
+
+  const textRef = useRef<HTMLParagraphElement>(null);
+
   if (!post) {
     return null;
   }
@@ -47,12 +59,18 @@ const SessionPostItem = ({
     year: "numeric",
   });
 
-  const { setInitialDelete, setPostIdToDelete } = initialDeleteStore(
-    (state) => ({
-      setInitialDelete: state.setInitialDelete,
-      setPostIdToDelete: state.setPostIdToDelete,
-    })
-  );
+  const handleMouseEnter = () => {
+    const isOverflowing =
+      textRef.current &&
+      textRef.current.scrollWidth > textRef.current.clientWidth;
+    if (isOverflowing) {
+      setShowFullText(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowFullText(false);
+  };
 
   function convertMilitaryToAMPM(time: string): string {
     if (!time || typeof time !== "string" || !/^\d{2}:\d{2}$/.test(time)) {
@@ -80,16 +98,69 @@ const SessionPostItem = ({
     setPostIdToDelete(post.id);
   };
 
+  const getDefaultImage = () => {
+    switch (post.instrument) {
+      case "Vocalist":
+        return {
+          url: "/defaults/defaultMicrophone.jpeg",
+        };
+      case "Lead Guitarist":
+        return {
+          url: "/defaults/defaultLeadGuitar.jpg",
+        };
+      case "Bass Guitarist":
+        return {
+          url: "/defaults/defaultBassGuitar.jpg",
+        };
+      case "Drummer":
+        return {
+          url: "/defaults/defaultDrum.jpg",
+        };
+      case "Pianist":
+        return {
+          url: "/defaults/defaultPiano.jpg",
+        };
+      case "Cajonist":
+        return {
+          url: "/defaults/defaultCajon.jpg",
+        };
+      case "Violinist":
+        return {
+          url: "/defaults/defaultViolin.jpg",
+        };
+      case "Percussionist":
+        return {
+          url: "/defaults/defaultPercussion.jpg",
+        };
+      case "Ukulele Player":
+        return {
+          url: "/defaults/defaultUkelele.jpg",
+        };
+      case "DJ":
+        return {
+          url: "/defaults/defaultDj.jpg",
+        };
+      case "Others":
+        return {
+          url: "/defaults/defaultOthers.jpg",
+        };
+    }
+  };
+
+  const defaultImage = getDefaultImage();
+
   const renderImage = () => (
     <img
       className="rounded-t-lg h-1/2 w-full"
-      src={post.imageUrl || "/jamming.jpg"}
+      src={post.imageUrl || defaultImage.url}
       alt=""
     />
   );
 
+  console.log(showFullText);
+
   const renderContent = () => (
-    <div className={`p-5 ${!modal ? "min-h-[31%] " : "h-[31%]"}`}>
+    <div className={`relative p-5 ${!modal ? "min-h-[31%] " : "h-[31%]"}`}>
       <div className="w-[96%]">
         <h5
           className={`mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white  ${
@@ -112,6 +183,11 @@ const SessionPostItem = ({
           {post.desc}
         </p>
       </div>
+      {showFullText ? (
+        <div className=" absolute mt-4 p-2 bg-gray-800 text-white text-sm rounded opacity-90">
+          {post.othersDescription ? post.othersDescription : post.instrument}
+        </div>
+      ) : null}
       <div className="flex items-center gap-2">
         <HiOutlineCalendar className="text-amber-400 font-bold h-[20px] w-[20px] flex-shrink-0" />
         <p className="text-gray-400">
@@ -120,7 +196,7 @@ const SessionPostItem = ({
       </div>
 
       <div className="flex items-start gap-2">
-        <HiOutlineLocationMarker className="text-amber-400 font-bold h-[20px] w-[20px] flex-shrink-0" />
+        <HiOutlineLocationMarker className="text-amber-400 font-bold h-[20px] w-[20px] flex-shrink-0 " />
         <div className="w-[92%] ">
           <p
             className={`mb-3 font-normal  ${
@@ -157,10 +233,23 @@ const SessionPostItem = ({
           <div className="pl-5 pt-7 pb-0">
             {!manage ? (
               <div className="flex flex-row items-center gap-2">
-                <div className="w-[120px] h-[35px] bg-amber-400 rounded-lg flex items-center justify-center">
-                  <p className="text-base text-gray-700 font-semibold font-ubuntu">
-                    {post.instrument}
-                  </p>
+                <div
+                  className={`relative w-[120px] h-[35px] bg-amber-400 rounded-lg flex items-center justify-center`}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <p
+                    className={`text-[16px]  text-gray-700 font-semibold font-ubuntu 
+                     overflow-hidden text-ellipsis  whitespace-nowrap
+                     `}
+                    ref={textRef}
+                  >
+                    {post.othersDescription ? (
+                      <>{post.othersDescription}</>
+                    ) : (
+                      <>{post.instrument}</>
+                    )}
+                  </p>{" "}
                 </div>
                 <a
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"

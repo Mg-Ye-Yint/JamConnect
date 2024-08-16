@@ -38,6 +38,7 @@ interface SessionPostType {
   postedTime: Timestamp;
   phoneNumber: string;
   instrument: string;
+  othersDescription: string;
 }
 
 export default function Home() {
@@ -72,6 +73,7 @@ export default function Home() {
           level: doc.data().level,
           paymentStatus: doc.data().paymentStatus,
           instrument: doc.data().instrument,
+          othersDescription: doc.data().othersDescription,
           postedTime:
             doc.data().postedTime === undefined
               ? ""
@@ -81,7 +83,7 @@ export default function Home() {
     setSessionPosts(postsData);
   };
 
-  console.log(sessionPosts);
+  console.table(sessionPosts);
 
   const { loginAttempt } = attemptStore((state) => ({
     loginAttempt: state.loginAttempt,

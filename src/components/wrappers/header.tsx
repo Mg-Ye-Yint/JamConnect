@@ -61,8 +61,9 @@ function Header() {
   const getButtonDetails = () => {
     switch (pathname) {
       case "/":
-      case "/your-profile":
+      case "/profile":
       case "/recruit":
+      case "/activity":
       case "/post-type-choose":
         return {
           text: "Search Musicians",
@@ -72,7 +73,7 @@ function Header() {
       case "/search-musicians":
         return {
           text: "Set Up Your Profile",
-          url: "/your-profile",
+          url: "/profile",
           icon: (
             <HiOutlineBriefcase className="text-white text-2xl md:hidden" />
           ),
@@ -157,7 +158,7 @@ function Header() {
               className="w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full justify-self-center"
               width={100}
               height={100}
-              onClick={() => router.push("/profile")}
+              onClick={() => router.push("/activity")}
             />
           ) : null}
 

@@ -24,6 +24,7 @@ interface SessionPostType {
   level: string;
   paymentStatus: string;
   instrument: string;
+  othersDescription: string;
 }
 
 const SessionPost = ({ posts }: { posts: SessionPostType[] }) => {
