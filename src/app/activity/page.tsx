@@ -2,7 +2,8 @@
 "use client";
 
 import LanguageOptions from "@/components/dynamics/languageOptions";
-import Manager from "@/components/dynamics/manager";
+import Manager from "@/components/dynamics/profile/manager";
+
 import { chooseLanguageStore } from "@/store";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";

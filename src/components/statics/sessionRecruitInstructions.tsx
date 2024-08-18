@@ -12,8 +12,8 @@ const SessionRecruitInstructions = () => {
         <span className="text-amber-400 inline">urgent replacement</span>{" "}
         <br className="hidden sm:block" />, a
         <span className="text-amber-400 inline"> paid gig</span>, or as a{" "}
-        <span className="text-amber-400 inline">substitute</span>, click here to
-        find the right player
+        <span className="text-amber-400 inline">substitute</span>, upload here
+        to find the right player.
       </h5>
     </>
   );

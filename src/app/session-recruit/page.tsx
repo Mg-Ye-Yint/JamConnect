@@ -1,12 +1,11 @@
 "use client";
 
-import LanguageOptions from "@/components/dynamics/languageOptions";
-import ProfileFillingForm from "@/components/dynamics/musician/profileFillingForm";
-
-import { chooseLanguageStore } from "@/store";
+import React from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import React from "react";
+import LanguageOptions from "@/components/dynamics/languageOptions";
+import { chooseLanguageStore } from "@/store";
+import SessionRecruitForm from "@/components/dynamics/session/sessionRecruitForm";
 
 const page = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -16,7 +15,6 @@ const page = () => {
   const { chooseLanguages } = chooseLanguageStore((state) => ({
     chooseLanguages: state.chooseLanguage,
   }));
-
   return (
     <>
       {" "}
@@ -24,7 +22,7 @@ const page = () => {
         {chooseLanguages ? <LanguageOptions /> : null}
       </div>{" "}
       <div className="flex flex-row justify-center items-center h-full">
-        <ProfileFillingForm />
+        <SessionRecruitForm />
       </div>
     </>
   );

@@ -28,7 +28,9 @@ const PostType = ({
           {description}
         </p>
         <a
-          href={title === "Band Recruitment" ? "/" : "/recruit"}
+          href={
+            title === "Band Recruitment" ? "/band-recruit" : "/session-recruit"
+          }
           className="inline-flex w-[70px] h-[30px] md:w-[100px] md:h-[50px] items-center px-3 py-2 font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 text-sm md:text-lg transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         >
           Recruit

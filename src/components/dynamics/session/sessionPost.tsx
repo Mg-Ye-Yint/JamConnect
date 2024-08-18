@@ -2,10 +2,11 @@
 
 import React, { useState } from "react";
 import { Timestamp } from "firebase/firestore";
-import SessionPostmodal from "./sessionPostModal";
-import SessionPostItem from "./sessionPostItem";
+
 import { useInstrumentListStore } from "@/store";
-import Plain from "../statics/plain";
+import SessionPostmodal from "./sessionPostModal";
+import Plain from "@/components/statics/plain";
+import SessionPostItem from "./sessionPostItem";
 
 interface SessionPostType {
   id: string;
@@ -63,7 +64,7 @@ const SessionPost = ({ posts }: { posts: SessionPostType[] }) => {
       {sortedPosts.length === 0 ? (
         <Plain text={"vacancy"} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-myPulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-myPulse mb-2">
           {sortedPosts.map((item, index) => (
             <div
               key={index}

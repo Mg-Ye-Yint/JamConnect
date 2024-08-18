@@ -2,7 +2,7 @@
 
 import { initialDeleteStore } from "@/store";
 import DeleteConfirm from "./deleteConfirm";
-import PostItem from "./sessionPostItem";
+import PostItem from "../session/sessionPostItem";
 import {
   collection,
   deleteDoc,
@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import app from "../../../shared/firebase.config";
+import app from "../../../../shared/firebase.config";
 
 const Manager = () => {
   const { data: session } = useSession();

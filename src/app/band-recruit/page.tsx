@@ -1,14 +1,14 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import BandRecruitForm from "@/components/dynamics/band/bandRecruitForm";
 import LanguageOptions from "@/components/dynamics/languageOptions";
 import { chooseLanguageStore } from "@/store";
-import SessionRecruitForm from "@/components/dynamics/sessionRecruitForm";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import React from "react";
 
 const page = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = useSession();
 
   if (session.data === null) return redirect("/");
@@ -22,7 +22,7 @@ const page = () => {
         {chooseLanguages ? <LanguageOptions /> : null}
       </div>{" "}
       <div className="flex flex-row justify-center items-center h-full">
-        <SessionRecruitForm />
+        <BandRecruitForm />
       </div>
     </>
   );

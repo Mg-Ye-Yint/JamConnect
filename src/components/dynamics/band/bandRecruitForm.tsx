@@ -1,11 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { instruments, payment, levels } from "../../../shared/data";
-import { useSession } from "next-auth/react";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
-import app from "../../../shared/firebase.config";
-import { Timestamp } from "firebase/firestore";
+import { doc, getFirestore, setDoc, Timestamp } from "firebase/firestore";
 import {
   getDownloadURL,
   getStorage,
@@ -13,19 +8,21 @@ import {
   uploadBytesResumable,
   UploadTaskSnapshot,
 } from "firebase/storage";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import Finished from "../statics/finished";
-
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import app from "../../../../shared/firebase.config";
 import { useRouter } from "next/navigation";
-import SessionRecruitInstructions from "../statics/sessionRecruitInstructions";
-import LoadingWheel from "../statics/loadingWheel";
+import Finished from "../../statics/finished";
+import { instruments, levels } from "../../../../shared/data";
+import PhoneInput from "react-phone-input-2";
+import LoadingWheel from "../../statics/loadingWheel";
+import BandRecruitInstructions from "../../statics/bandRecruitInstructions";
+import "react-phone-input-2/lib/style.css";
 
 interface InputState {
-  title?: string;
-  desc?: string;
-  date?: Date;
+  bandName?: string;
   location?: string;
+  desc?: string;
   instrument?: string;
   userName?: string;
   userImage?: string;
@@ -34,14 +31,14 @@ interface InputState {
   phoneNumber?: string;
 }
 
-const SessionRecruitForm = () => {
+const BandRecruitForm = () => {
   const { data: session } = useSession();
   const [input, setInput] = useState<InputState>({});
   const [submitting, setSubmitting] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const db = getFirestore(app);
   const storage = getStorage(app);
-  const [titleCharsLeft, setTitleCharsLeft] = useState(150);
+  const [bandNameCharsLeft, setBandNameCharsLeft] = useState(50);
   const [descCharsLeft, setDescCharsLeft] = useState(400);
   const [locationCharsLeft, setLocationCharsLeft] = useState(200);
   const [otherDescriptionCharsLeft, setOtherDescriptionCharsLeft] =
@@ -99,8 +96,8 @@ const SessionRecruitForm = () => {
 
     if (maxLength) {
       switch (name) {
-        case "title":
-          setTitleCharsLeft(maxLength - value.length);
+        case "bandName":
+          setBandNameCharsLeft(maxLength - value.length);
           break;
         case "desc":
           setDescCharsLeft(maxLength - value.length);
@@ -127,17 +124,6 @@ const SessionRecruitForm = () => {
     if (!submitting) {
       setSubmitting(true);
       try {
-        if (!input.date) {
-          console.error("Date is required");
-          return;
-        }
-        const convertedDate = new Date(input.date);
-        if (isNaN(convertedDate.getTime())) {
-          console.error("Invalid date value");
-          return;
-        }
-
-        const timestamp = Timestamp.fromDate(convertedDate);
         const postedTime = Timestamp.now();
 
         let imageUrl = "";
@@ -169,14 +155,13 @@ const SessionRecruitForm = () => {
 
         const dataToSave = {
           ...input,
-          date: timestamp,
           imageUrl,
           postedTime,
           phoneNumber,
           ...(showOthersInput && { othersDescription }),
         };
 
-        await setDoc(doc(db, "posts", Date.now().toString()), dataToSave);
+        await setDoc(doc(db, "bands", Date.now().toString()), dataToSave);
       } catch (error) {
         console.log("Error", error);
         window.alert("Failed to create event.");
@@ -196,19 +181,17 @@ const SessionRecruitForm = () => {
   return (
     <div className=" flex flex-col  justify-center m-3 gap-y-3">
       {submitting && <LoadingWheel text={"Loading..."} />}
-      <SessionRecruitInstructions />
+      <BandRecruitInstructions />
       <form onSubmit={handleSubmit} className="animate-myPulse">
         <div className="relative">
           <input
             type="text"
-            name="title"
-            maxLength={150}
-            placeholder="Title"
+            name="bandName"
+            placeholder="Band Name"
             required
             onChange={handleChange}
             className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] pr-14 md:pr-12"
           />
-          <CharCount left={titleCharsLeft} max={150} />
         </div>
         <div className="relative">
           <textarea
@@ -221,22 +204,7 @@ const SessionRecruitForm = () => {
           />
           <CharCount left={descCharsLeft} max={400} />
         </div>
-        <div className="flex gap-2">
-          <input
-            type="date"
-            name="date"
-            required
-            onChange={handleChange}
-            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
-          />
-          <input
-            type="time"
-            name="time"
-            required
-            onChange={handleChange}
-            className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
-          />
-        </div>
+
         <div className="relative">
           <input
             type="text"
@@ -249,6 +217,34 @@ const SessionRecruitForm = () => {
           />
           <CharCount left={locationCharsLeft} max={200} />
         </div>
+        <select
+          name="instrument"
+          required
+          onChange={handleChange}
+          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
+        >
+          <option value="" disabled selected>
+            Type of player
+          </option>
+          {instruments.map((item) => (
+            <option key={item.id}>{item.profession}</option>
+          ))}
+        </select>
+        {showOthersInput && (
+          <div className="relative">
+            <input
+              type="text"
+              name="othersDescription"
+              required
+              placeholder="Describe the type of player"
+              maxLength={50}
+              onChange={(e) => setOthersDescription(e.target.value)}
+              value={othersDescription}
+              className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
+            />{" "}
+            <CharCount left={otherDescriptionCharsLeft} max={50} />
+          </div>
+        )}
         <div className="flex gap-2">
           <div className="relative flex-1">
             <input
@@ -265,21 +261,7 @@ const SessionRecruitForm = () => {
               Years
             </div>
           </div>
-          <select
-            name="paymentStatus"
-            required
-            onChange={handleChange}
-            className=" flex-1 bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 text-sm md:text-base"
-          >
-            <option value="" disabled selected className="text-xs md:text-base">
-              Payment Status
-            </option>
-            {payment.map((item) => (
-              <option key={item.id} className="text-sm md:text-base">
-                {item.paymentStatus}
-              </option>
-            ))}
-          </select>
+
           <select
             name="level"
             required
@@ -323,36 +305,10 @@ const SessionRecruitForm = () => {
             Phone Number
           </div>
         </div>
-        <select
-          name="instrument"
-          required
-          onChange={handleChange}
-          className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
-        >
-          <option value="" disabled selected>
-            Type of player
-          </option>
-          {instruments.map((item) => (
-            <option key={item.id}>{item.profession}</option>
-          ))}
-        </select>
-        {showOthersInput && (
-          <div className="relative">
-            <input
-              type="text"
-              name="othersDescription"
-              required
-              placeholder="Describe the type of player"
-              maxLength={50}
-              onChange={(e) => setOthersDescription(e.target.value)}
-              value={othersDescription}
-              className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
-            />{" "}
-            <CharCount left={otherDescriptionCharsLeft} max={50} />
-          </div>
-        )}
+
         <input
           type="file"
+          required
           accept="image/gif, image/jpeg, image/png"
           className="bg-zinc-300 border border-black placeholder-black w-full p-1 rounded-md text-black mt-3"
           onChange={handleFileChange}
@@ -369,8 +325,4 @@ const SessionRecruitForm = () => {
   );
 };
 
-export default SessionRecruitForm;
-
-function setSubmit(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
+export default BandRecruitForm;

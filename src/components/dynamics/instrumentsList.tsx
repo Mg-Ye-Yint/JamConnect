@@ -26,11 +26,7 @@ const InstrumentsList = () => {
     setSelectedProfession(profession);
   };
 
-  console.log(selectedInstrument);
-
   const pathname = usePathname();
-
-  console.log(selectedProfession);
 
   return (
     <div

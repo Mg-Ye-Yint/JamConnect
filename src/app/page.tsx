@@ -18,8 +18,10 @@ import Categories from "@/components/dynamics/catagories";
 import Body from "@/components/statics/body";
 import SearchBar from "@/components/dynamics/searchBar";
 import LoginRequest from "@/components/dynamics/loginRequest";
-import SessionPost from "@/components/dynamics/sessionPost";
+
 import Plain from "@/components/statics/plain";
+import SessionPost from "@/components/dynamics/session/sessionPost";
+import BandPost from "@/components/dynamics/band/bandPost";
 
 interface SessionPostType {
   id: string;
@@ -41,20 +43,36 @@ interface SessionPostType {
   othersDescription: string;
 }
 
+interface BandPostType {
+  id: string;
+  bandName: string;
+  desc: string;
+  experience: string;
+  imageUrl: string;
+  instrument: string;
+  level: string;
+  location: string;
+  othersDescription: string;
+  phoneNumber: string;
+  postedTime: Timestamp;
+  userEmail: string;
+  userImage: string;
+  userName: string;
+}
+
 export default function Home() {
-  const db = getFirestore(app); // original firebase provided code မှာပါတဲ့ app ကို getFireStore နဲ့ပြန်ယူလိုက်တယ်
+  const db = getFirestore(app);
 
   const [sessionPosts, setSessionPosts] = useState<SessionPostType[]>([]);
+  const [bandPosts, setBandPosts] = useState<BandPostType[]>([]);
 
   useEffect(() => {
-    getPost();
+    getSessionPost(), getBandPost();
   }, []);
 
-  const getPost = async () => {
-    const querySnapshot = await getDocs(collection(db, "posts")); //app သိမ်းထားတဲ့ variable ကို getDocs function                                                      သုံးပြီးပေးထားတဲ့ dataBase နာမည်အတိုင်းရှာတယ်
-    querySnapshot.forEach((doc) => {
-      // console.log(doc.id, " => ", doc.data());
-    });
+  const getSessionPost = async () => {
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    querySnapshot.forEach((doc) => {});
     const postsData: SessionPostType[] = querySnapshot.docs.map(
       (doc) =>
         ({
@@ -83,7 +101,36 @@ export default function Home() {
     setSessionPosts(postsData);
   };
 
+  const getBandPost = async () => {
+    const querySnapshot = await getDocs(collection(db, "bands"));
+    querySnapshot.forEach((doc) => {});
+    const postsDataTwo: BandPostType[] = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          bandName: doc.data().bandName,
+          desc: doc.data().desc,
+          imageUrl: doc.data().imageUrl,
+          location: doc.data().location,
+          userEmail: doc.data().userEmail,
+          userImage: doc.data().userImage,
+          userName: doc.data().userName,
+          phoneNumber: doc.data().phoneNumber,
+          experience: doc.data().experience,
+          level: doc.data().level,
+          instrument: doc.data().instrument,
+          othersDescription: doc.data().othersDescription,
+          postedTime:
+            doc.data().postedTime === undefined
+              ? ""
+              : doc.data().postedTime.toDate(),
+        } as BandPostType)
+    );
+    setBandPosts(postsDataTwo);
+  };
+
   console.table(sessionPosts);
+  console.log("bandposts", bandPosts);
 
   const { loginAttempt } = attemptStore((state) => ({
     loginAttempt: state.loginAttempt,
@@ -107,13 +154,10 @@ export default function Home() {
 
       <main className="flex relative min-h-screen flex-col items-center justify-between">
         <Body />
-        <SearchBar />
-
         <InstrumentsList />
         <Categories />
         {activeTab === "sessions" ? <SessionPost posts={sessionPosts} /> : null}
-        {activeTab === "band" ? <Plain text={"vacancy"} /> : null}
-        <Footer />
+        {activeTab === "band" ? <BandPost posts={bandPosts} /> : null}
       </main>
     </>
   );

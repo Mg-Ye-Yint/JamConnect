@@ -12,6 +12,8 @@ import { HiSearch } from "react-icons/hi";
 import { HiOutlineBriefcase } from "react-icons/hi";
 import { HiLogin } from "react-icons/hi";
 import { HiLogout } from "react-icons/hi";
+import { HiUsers } from "react-icons/hi";
+import { HiMusicNote } from "react-icons/hi";
 import Title from "../statics/title";
 
 interface CommonProps {
@@ -62,9 +64,12 @@ function Header() {
     switch (pathname) {
       case "/":
       case "/profile":
-      case "/recruit":
       case "/activity":
       case "/post-type-choose":
+      case "/about":
+      case "/contact":
+      case "/frequently-asked-questions":
+      case "/privacy-policy":
         return {
           text: "Search Musicians",
           url: "/search-musicians",
@@ -77,6 +82,18 @@ function Header() {
           icon: (
             <HiOutlineBriefcase className="text-white text-2xl md:hidden" />
           ),
+        };
+      case "/session-recruit":
+        return {
+          text: "Band Recruit",
+          url: "/band-recruit",
+          icon: <HiUsers className="text-white text-2xl md:hidden" />,
+        };
+      case "/band-recruit":
+        return {
+          text: "Session Recruit",
+          url: "/session-recruit",
+          icon: <HiMusicNote className="text-white text-2xl md:hidden" />,
         };
       default:
         return null;

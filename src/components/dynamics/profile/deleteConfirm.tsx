@@ -3,9 +3,9 @@
 import { initialDeleteStore } from "@/store";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import React, { useState } from "react";
-import app from "../../../shared/firebase.config";
-import Finished from "../statics/finished";
-import DeletingWheel from "../statics/delete";
+import app from "../../../../shared/firebase.config";
+import Finished from "../../statics/finished";
+import DeletingWheel from "../../statics/delete";
 
 const DeleteConfirm = () => {
   const [deleting, setDeleting] = useState(false);

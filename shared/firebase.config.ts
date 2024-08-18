@@ -15,7 +15,7 @@ const firebaseConfig = {
   storageBucket: "jamconnect-d6109.appspot.com",
   messagingSenderId: "635400773610",
   appId: "1:635400773610:web:abce4cceaffae560691c93",
-  measurementId: "G-BNBH8YTDM3"
+  measurementId: "G-BNBH8YTDM3",
 };
 
 // Initialize Firebase

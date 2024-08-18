@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import Finished from "../statics/finished";
-import { profileInputs } from "../../../shared/data";
-import ProfileFillingInstructions from "../statics/profileFillingInstructions";
+
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { doc, setDoc, Timestamp, getFirestore } from "firebase/firestore";
@@ -14,9 +12,11 @@ import {
   UploadTaskSnapshot,
   getStorage,
 } from "firebase/storage";
-
-import app from "../../../shared/firebase.config";
-import LoadingWheel from "../statics/loadingWheel";
+import app from "../../../../shared/firebase.config";
+import LoadingWheel from "@/components/statics/loadingWheel";
+import ProfileFillingInstructions from "@/components/statics/profileFillingInstructions";
+import { profileInputs } from "../../../../shared/data";
+import Finished from "@/components/statics/finished";
 
 interface InputState {
   name?: string;

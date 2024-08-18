@@ -3,6 +3,7 @@ import { Ubuntu, Bungee_Shade, Gugi, Archivo_Black } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "@/components/wrappers/sessionWrapper";
 import Header from "@/components/wrappers/header";
+import Footer from "@/components/wrappers/footer";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
         >
           <Header />
           {children}
+          <Footer />
         </body>
       </SessionWrapper>
     </html>

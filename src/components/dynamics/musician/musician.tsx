@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import InstrumentsList from "./instrumentsList";
+import InstrumentsList from "../instrumentsList";
 import MusicianProfile from "./musicianProfile";
 import MusicianModal from "./musicanModal";
 import { useInstrumentListStore } from "@/store";
-import Plain from "../statics/plain";
+import Plain from "../../statics/plain";
 import { Timestamp } from "firebase/firestore";
 
 interface MusicianType {

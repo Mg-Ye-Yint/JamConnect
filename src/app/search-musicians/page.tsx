@@ -8,8 +8,7 @@ import { collection, getDocs, getFirestore } from "firebase/firestore";
 import app from "../../../shared/firebase.config";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import MusicianProfile from "@/components/dynamics/musicianProfile";
-import Musician from "@/components/dynamics/musician";
+import Musician from "@/components/dynamics/musician/musician";
 
 interface MusicianType {
   id: string;
