@@ -112,7 +112,7 @@ export default function Home() {
         <InstrumentsList />
         <Categories />
         {activeTab === "sessions" ? <SessionPost posts={sessionPosts} /> : null}
-        {activeTab === "band" ? <Plain /> : null}
+        {activeTab === "band" ? <Plain text={"vacancy"} /> : null}
         <Footer />
       </main>
     </>

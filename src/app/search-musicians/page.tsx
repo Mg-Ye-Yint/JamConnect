@@ -4,19 +4,28 @@
 import React, { useEffect, useState } from "react";
 import { chooseLanguageStore } from "@/store";
 import LanguageOptions from "@/components/dynamics/languageOptions";
-import Musician from "@/components/dynamics/musician";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 import app from "../../../shared/firebase.config";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import MusicianProfile from "@/components/dynamics/musicianProfile";
+import Musician from "@/components/dynamics/musician";
 
 interface MusicianType {
   id: string;
   name: string;
-  age: number;
-  profession: string;
-  experience: number;
+  instrument: string;
   location: string;
+  imageUrl: string;
+  age: string;
+  experience: string;
+  about: string;
+  email: string;
+  phoneNumber: string;
+  postedTime: string;
+  level: string;
+  othersDescription: string;
+  gender: string;
 }
 
 const page = () => {
@@ -43,9 +52,17 @@ const page = () => {
           id: doc.id,
           name: doc.data().name,
           age: doc.data().age,
-          profession: doc.data().profession,
+          instrument: doc.data().instrument,
           experience: doc.data().experience,
           location: doc.data().location,
+          imageUrl: doc.data().imageUrl,
+          about: doc.data().about,
+          email: doc.data().email,
+          phoneNumber: doc.data().phoneNumber,
+          postedTime: doc.data().postedTime,
+          level: doc.data().level,
+          othersDescription: doc.data().othersDescription,
+          gender: doc.data().gender,
         } as MusicianType)
     );
     setMusicians(musicianData);

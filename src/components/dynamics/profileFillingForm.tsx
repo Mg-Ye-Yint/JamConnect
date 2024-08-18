@@ -28,7 +28,6 @@ interface InputState {
   level?: number;
   image?: string;
   phoneNumber?: string;
-  //   date?: Date;
 }
 
 const ProfileFillingForm = () => {
@@ -56,12 +55,6 @@ const ProfileFillingForm = () => {
 
   const capitalizeFirstLetter = (str: string) => {
     return str.trim().charAt(0).toUpperCase() + str.trim().slice(1);
-  };
-
-  const ChaCount = ({ left, max }: { left: number; max: number }) => {
-    <div>
-      {left}/{max}
-    </div>;
   };
 
   const CharCount = ({ left, max }: { left: number; max: number }) => (
@@ -124,18 +117,6 @@ const ProfileFillingForm = () => {
     if (!submitting) {
       setSubmitting(true);
       try {
-        // if (!input.date) {
-        //   console.error("Date is required");
-
-        //   return;
-        // }
-        // const convertedDate = new Date(input.date);
-        // if (isNaN(convertedDate.getTime())) {
-        //   console.error("Invalid date value");
-        //   return;
-        // }
-
-        // const timestamp = Timestamp.fromDate(convertedDate);
         const postedTime = Timestamp.now();
 
         let imageUrl = "";
@@ -167,11 +148,9 @@ const ProfileFillingForm = () => {
 
         const dataToSave = {
           ...input,
-          //   date: timestamp,
           imageUrl,
           postedTime,
           phoneNumber,
-
           ...(showOthersInput && { othersDescription }),
         };
 
@@ -239,12 +218,12 @@ const ProfileFillingForm = () => {
                 name="othersDescription"
                 required
                 placeholder="Describe What You Can Do"
-                maxLength={50}
+                maxLength={25}
                 onChange={(e) => setOthersDescription(e.target.value)}
                 value={othersDescription}
                 className="bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3"
               />{" "}
-              <CharCount left={otherDescriptionCharsLeft} max={50} />
+              <CharCount left={otherDescriptionCharsLeft} max={25} />
             </div>
           )}
           <div className="relative">
@@ -262,13 +241,29 @@ const ProfileFillingForm = () => {
           <div className="flex gap-2">
             <div className="relative flex-1">
               <input
-                type="number"
+                type="text"
                 name="age"
                 placeholder="Age"
                 required
                 min={7}
                 onChange={handleChange}
                 className="bg-zinc-300 border border-black placeholder:text-sm md:placeholder:text-base placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 "
+                onKeyPress={(e) => {
+                  if (
+                    !/[0-9]/.test(e.key) &&
+                    e.key !== "Backspace" &&
+                    e.key !== "Tab" &&
+                    e.key !== "ArrowLeft" &&
+                    e.key !== "ArrowRight"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value) {
+                    e.target.value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+                  }
+                }}
               />
               <div className="absolute left-24 top-5 text-gray-500 text-sm md:text-base hidden sm:block">
                 Years
@@ -308,6 +303,27 @@ const ProfileFillingForm = () => {
               <option className="text-sm md:text-base">Advanced</option>
               <option className="text-sm md:text-base">Expert</option>
             </select>
+            <select
+              name="gender"
+              required
+              onChange={handleChange}
+              className=" flex-1 bg-zinc-300 border border-black placeholder-black focus:placeholder-blue-500 w-full rounded-md h-[35px] mt-3 text-sm md:text-base"
+            >
+              <option
+                value=""
+                disabled
+                selected
+                className="text-sm md:text-base"
+              >
+                Gender
+              </option>
+              <option className="text-sm md:text-base">Male</option>
+              <option className="text-sm md:text-base">Female</option>
+              <option className="text-sm md:text-base">Non-Binary</option>
+              <option className="text-sm md:text-base">
+                Prefer not to say
+              </option>
+            </select>
           </div>
 
           <div className="relative">
@@ -339,6 +355,7 @@ const ProfileFillingForm = () => {
           <div className="relative">
             <input
               type="file"
+              required
               accept="image/gif, image/jpeg, image/png"
               className="bg-zinc-300 border border-black placeholder-black w-full p-1 rounded-md text-black mt-3"
               onChange={handleFileChange}
@@ -354,9 +371,7 @@ const ProfileFillingForm = () => {
             Submit
           </button>
         </form>
-        {postSucceed ? (
-          <Finished text={`Profile ${(<br />)} uploaded`} />
-        ) : null}
+        {postSucceed ? <Finished text={`Profile uploaded`} /> : null}
       </div>{" "}
     </>
   );

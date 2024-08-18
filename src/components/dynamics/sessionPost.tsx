@@ -61,7 +61,7 @@ const SessionPost = ({ posts }: { posts: SessionPostType[] }) => {
       <SessionPostmodal uniquePost={uniquePost} />
 
       {sortedPosts.length === 0 ? (
-        <Plain />
+        <Plain text={"vacancy"} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-myPulse">
           {sortedPosts.map((item, index) => (

@@ -14,17 +14,17 @@ export const instruments = [
 ];
 
 export const profileInputs = [
-    { id: 1,  profession: "Vocalist", level: "beginner" },
-    { id: 2,  profession: "Lead Guitarist", level: "intermediate" },
-    { id: 3, profession: "Bass Guitarist", level: "advanced" },
-    { id: 4,  profession: "Drummer", level: "expert" },
-    { id: 5,  profession: "Pianist" },
-    { id: 6, profession: "Cajonist" },
-    { id: 7,  profession: "Violinist"  },
-    { id: 8,  profession: "Percussionist" },
-    { id: 9,  profession: "Ukulele Player"  },
-    { id: 10,  profession: "DJ" },
-    { id: 11,  profession: "Others" },
+    { id: "1",  profession: "Vocalist", level: "beginner" },
+    { id: "2",  profession: "Lead Guitarist", level: "intermediate" },
+    { id: "3", profession: "Bass Guitarist", level: "advanced" },
+    { id: "4",  profession: "Drummer", level: "expert" },
+    { id: "5",  profession: "Pianist" },
+    { id: "6", profession: "Cajonist" },
+    { id: "7",  profession: "Violinist"  },
+    { id: "8",  profession: "Percussionist" },
+    { id: "9",  profession: "Ukulele Player"  },
+    { id: "10",  profession: "DJ" },
+    { id: "11",  profession: "Others" },
 ]
 
 export const languageOptions = [
