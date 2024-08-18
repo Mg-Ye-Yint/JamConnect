@@ -18,7 +18,7 @@ const page = () => {
   return (
     <>
       {" "}
-      <div className="w-full h-[20px] p-1">
+      <div className="w-full h-[20px]  p-1">
         {chooseLanguages ? <LanguageOptions /> : null}
       </div>{" "}
       <div className="flex flex-row justify-center items-center h-full">

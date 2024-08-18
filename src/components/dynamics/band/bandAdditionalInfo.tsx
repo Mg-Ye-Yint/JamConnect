@@ -22,7 +22,6 @@ const BandAdditionalInfo = ({ info }: { info: InfoType }) => {
   return (
     <div className="ml-2 mt-1 mr-2 h-[120px] mb-14">
       <div className="flex flex-col md:flex-row items-start gap-2">
-        <div className="w-[75px] h-[35px] bg-amber-400 rounded-lg flex items-center justify-center"></div>
         <div className="w-[100px] h-[35px] bg-amber-400 rounded-lg flex items-center justify-center">
           <p className="text-base text-gray-700 font-semibold font-ubuntu">
             {info.level}

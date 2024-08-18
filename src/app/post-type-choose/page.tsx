@@ -15,7 +15,7 @@ const page = () => {
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-evenly align-middle">
       {postTypes.map((post, index) => (
-        <div key={index} className="animate-myPulse">
+        <div key={index} className="animate-myPulse mb-2">
           <PostType
             title={post.title}
             description={post.description}

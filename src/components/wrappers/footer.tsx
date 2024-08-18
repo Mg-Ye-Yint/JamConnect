@@ -5,7 +5,6 @@ const Footer = () => {
   return (
     <footer className="bg-gray-700 text-gray-300 p-4 w-full">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-        {/* Logo and Description */}
         <div className="mb-6 md:mb-0">
           <h2 className="text-2xl font-bold text-white">MusicianHub</h2>
           <p className="mt-2 text-sm">
@@ -16,7 +15,6 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Links to Key Pages */}
         <div className="flex flex-col md:flex-row md:space-x-8">
           <a href="/about" className="text-sm hover:text-white mb-2 md:mb-0">
             About Us
@@ -35,7 +33,6 @@ const Footer = () => {
           </a>
         </div>
 
-        {/* Social Media Icons */}
         <div className="flex space-x-4 mt-6 md:mt-0">
           <a
             href="https://github.com/Mg-Ye-Yint"

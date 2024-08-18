@@ -1,6 +1,6 @@
 "use client";
 
-import { initialDeleteStore } from "@/store";
+import { initialBandDeleteStore } from "@/store";
 import { Timestamp } from "firebase/firestore";
 import React, { useRef, useState } from "react";
 import { HiOutlineLocationMarker, HiTrash } from "react-icons/hi";
@@ -32,12 +32,11 @@ const BandPostItem = ({
   modal: boolean;
   manage: boolean;
 }) => {
-  const { setInitialDelete, setPostIdToDelete } = initialDeleteStore(
-    (state) => ({
-      setInitialDelete: state.setInitialDelete,
-      setPostIdToDelete: state.setPostIdToDelete,
-    })
-  );
+  const { setInitialBandDelete, setBandPostIdToDelete } =
+    initialBandDeleteStore((state) => ({
+      setInitialBandDelete: state.setInitialBandDelete,
+      setBandPostIdToDelete: state.setBandPostIdToDelete,
+    }));
 
   const [showFullText, setShowFullText] = useState(false);
 
@@ -68,9 +67,13 @@ const BandPostItem = ({
   };
 
   const handleTryDelete = () => {
-    setInitialDelete(true);
-    setPostIdToDelete(post.id);
+    setInitialBandDelete(true);
+    setBandPostIdToDelete(post.id);
   };
+
+  const renderImage = () => (
+    <img className="rounded-t-lg h-1/2 w-full" src={post.imageUrl} alt="" />
+  );
 
   const renderContent = () => (
     <div className={`relative p-5 ${!modal ? "min-h-[31%] " : "h-[31%]"}`}>
@@ -131,6 +134,7 @@ const BandPostItem = ({
             : "w-[250px] md:w-[300px] lg:w-[350px] h-[400px] "
         } bg-white border border-gray-200 rounded-lg shadow-deep dark:bg-gray-800 dark:border-gray-700 z-20`}
       >
+        {renderImage()}
         {renderContent()}
         {!modal ? <BandAdditionalInfo info={post} /> : null}
 

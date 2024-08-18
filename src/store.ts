@@ -33,18 +33,32 @@ export const chooseLanguageStore = create<chooseLanguageState>((set)=>({
     setChooseLanguage: (value) => set({chooseLanguage: value}),
 }))
 
-interface InitialDeleteState {
-    initialDelete: boolean;
-    setInitialDelete: (value: boolean) => void;
-    postIdToDelete: string | null;
-    setPostIdToDelete: (id: string | null) => void;
+interface InitialSessionDeleteState {
+    initialSessionDelete: boolean;
+    setInitialSessionDelete: (value: boolean) => void;
+    sessionPostIdToDelete: string | null;
+    setSessionPostIdToDelete: (id: string | null) => void;
   }
   
-  export const initialDeleteStore = create<InitialDeleteState>((set) => ({
-    initialDelete: false,
-    setInitialDelete: (value) => set({ initialDelete: value }),
-    postIdToDelete: null,
-    setPostIdToDelete: (id) => set({ postIdToDelete: id }),
+  export const initialSessionDeleteStore = create<InitialSessionDeleteState>((set) => ({
+    initialSessionDelete: false,
+    setInitialSessionDelete: (value) => set({ initialSessionDelete: value }),
+    sessionPostIdToDelete: null,
+    setSessionPostIdToDelete: (id) => set({ sessionPostIdToDelete: id }),
+  }));
+
+  interface InitialBandDeleteState {
+    initialBandDelete: boolean;
+    setInitialBandDelete: (value: boolean) => void;
+    bandPostIdToDelete: string | null;
+    setBandPostIdToDelete: (id: string | null) => void;
+  }
+  
+  export const initialBandDeleteStore = create<InitialBandDeleteState>((set) => ({
+    initialBandDelete: false,
+    setInitialBandDelete: (value) => set({ initialBandDelete: value }),
+    bandPostIdToDelete: null,
+    setBandPostIdToDelete: (id) => set({ bandPostIdToDelete: id }),
   }));
 
   type LanguageOption = {

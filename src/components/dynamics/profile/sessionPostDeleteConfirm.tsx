@@ -1,33 +1,35 @@
 "use client";
 
-import { initialDeleteStore } from "@/store";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import React, { useState } from "react";
 import app from "../../../../shared/firebase.config";
 import Finished from "../../statics/finished";
 import DeletingWheel from "../../statics/delete";
+import { initialSessionDeleteStore } from "@/store";
 
-const DeleteConfirm = () => {
+const SessionPostDeleteConfirm = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteSucceed, setDeleteSucceed] = useState(false);
 
-  const { setInitialDelete, setPostIdToDelete, postIdToDelete } =
-    initialDeleteStore((state) => ({
-      setInitialDelete: state.setInitialDelete,
-      setPostIdToDelete: state.setPostIdToDelete,
-      postIdToDelete: state.postIdToDelete,
-    }));
+  const {
+    setInitialSessionDelete,
+    setSessionPostIdToDelete,
+    sessionPostIdToDelete,
+  } = initialSessionDeleteStore((state) => ({
+    setInitialSessionDelete: state.setInitialSessionDelete,
+    setSessionPostIdToDelete: state.setSessionPostIdToDelete,
+    sessionPostIdToDelete: state.sessionPostIdToDelete,
+  }));
 
   const db = getFirestore(app);
 
-  const handleDelete = async () => {
-    if (postIdToDelete) {
+  const handleSessionDelete = async () => {
+    if (sessionPostIdToDelete) {
       setDeleting(true);
       try {
-        const postRef = doc(db, "posts", postIdToDelete);
+        const postRef = doc(db, "posts", sessionPostIdToDelete);
         await deleteDoc(postRef);
-
-        setPostIdToDelete(null);
+        setSessionPostIdToDelete(null);
       } catch (error) {
         console.error("Error deleting document: ", error);
       }
@@ -53,14 +55,14 @@ const DeleteConfirm = () => {
           <button
             className="text-font-semibold text-white bg-yellow-500 hover:bg-yellow-600 text-lg p-2
           md:text-xl lg:text-2xl transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 rounded-2xl"
-            onClick={() => setInitialDelete(false)}
+            onClick={() => setInitialSessionDelete(false)}
           >
             Cancel
           </button>
           <button
             className="text-font-semibold text-white bg-red-700 p-2 hover:bg-red-800 text-lg md:text-xl lg:text-2xl
           transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 rounded-2xl"
-            onClick={handleDelete}
+            onClick={handleSessionDelete}
           >
             Delete
           </button>
@@ -71,4 +73,4 @@ const DeleteConfirm = () => {
   );
 };
 
-export default DeleteConfirm;
+export default SessionPostDeleteConfirm;

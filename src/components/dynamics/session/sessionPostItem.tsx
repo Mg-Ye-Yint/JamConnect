@@ -4,8 +4,9 @@ import {
   HiOutlineLocationMarker,
   HiTrash,
 } from "react-icons/hi";
-import { initialDeleteStore } from "@/store";
+
 import SessionAdditionalInfo from "./sessionAdditionalInfo";
+import { initialSessionDeleteStore } from "@/store";
 
 interface SessionPostType {
   id: string;
@@ -36,12 +37,11 @@ const SessionPostItem = ({
   modal: boolean;
   manage: boolean;
 }) => {
-  const { setInitialDelete, setPostIdToDelete } = initialDeleteStore(
-    (state) => ({
-      setInitialDelete: state.setInitialDelete,
-      setPostIdToDelete: state.setPostIdToDelete,
-    })
-  );
+  const { setInitialSessionDelete, setSessionPostIdToDelete } =
+    initialSessionDeleteStore((state) => ({
+      setInitialSessionDelete: state.setInitialSessionDelete,
+      setSessionPostIdToDelete: state.setSessionPostIdToDelete,
+    }));
 
   const [showFullText, setShowFullText] = useState(false);
 
@@ -94,8 +94,8 @@ const SessionPostItem = ({
   };
 
   const handleTryDelete = () => {
-    setInitialDelete(true);
-    setPostIdToDelete(post.id);
+    setInitialSessionDelete(true);
+    setSessionPostIdToDelete(post.id);
   };
 
   const getDefaultImage = () => {
