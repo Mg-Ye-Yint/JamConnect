@@ -1,12 +1,17 @@
 "use client";
 
 import LanguageOptions from "@/components/dynamics/languageOptions";
-import { chooseLanguageStore } from "@/store";
+import LoginRequest from "@/components/dynamics/loginRequest";
+import { attemptStore, chooseLanguageStore } from "@/store";
 import React from "react";
 
 const page = () => {
   const { chooseLanguages } = chooseLanguageStore((state) => ({
     chooseLanguages: state.chooseLanguage,
+  }));
+
+  const { loginAttempt } = attemptStore((state) => ({
+    loginAttempt: state.loginAttempt,
   }));
 
   return (
@@ -15,6 +20,7 @@ const page = () => {
       <div className="w-full h-[20px] bg-gray-100 p-1">
         {chooseLanguages ? <LanguageOptions /> : null}
       </div>
+      {loginAttempt ? <LoginRequest /> : null}
       <div className="min-h-screen bg-gray-100 flex flex-col">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gray-800 text-center">

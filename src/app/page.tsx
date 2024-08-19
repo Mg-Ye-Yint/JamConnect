@@ -1,7 +1,5 @@
 "use client";
 
-import Footer from "@/components/wrappers/footer";
-
 import InstrumentsList from "@/components/dynamics/instrumentsList";
 import app from "../../shared/firebase.config";
 import {
@@ -11,15 +9,11 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-
 import LanguageOptions from "@/components/dynamics/languageOptions";
 import { activeTabStore, attemptStore, chooseLanguageStore } from "@/store";
 import Categories from "@/components/dynamics/catagories";
 import Body from "@/components/statics/body";
-import SearchBar from "@/components/dynamics/searchBar";
 import LoginRequest from "@/components/dynamics/loginRequest";
-
-import Plain from "@/components/statics/plain";
 import SessionPost from "@/components/dynamics/session/sessionPost";
 import BandPost from "@/components/dynamics/band/bandPost";
 

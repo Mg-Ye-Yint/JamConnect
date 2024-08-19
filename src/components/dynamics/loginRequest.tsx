@@ -18,7 +18,7 @@ const LoginRequest = () => {
           <HiX size={24} className="text-white" />
         </button>
         <p className="font-bold text-white font-mono text-lg md:text-xl lg:text-2xl">
-          Please Sign In To Create Post!
+          Please Sign In
         </p>
       </div>
     </div>

@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { attemptStore, chooseLanguageStore, useLanguageStore } from "@/store";
 import { HiChevronDown, HiHome, HiPlus } from "react-icons/hi";
@@ -21,16 +20,7 @@ interface CommonProps {
   children: React.ReactNode;
 }
 
-interface LinkProps extends CommonProps {
-  href: string;
-}
-
-interface ButtonProps extends CommonProps {
-  onClick: () => void;
-}
-
 function Header() {
-  const DEFAULT_IMAGE = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const { data: session } = useSession();
 
   const imageSrc = session?.user?.image;
@@ -56,12 +46,12 @@ function Header() {
     setChooseLanguages(!chooseLanguages);
   };
 
-  const linkDestination = pathname === "/" ? "/post-type-choose" : "/";
-
   const router = useRouter();
 
+  console.log("pathname", pathname);
+
   const getButtonDetails = () => {
-    switch (pathname) {
+    switch (pathname.toLowerCase()) {
       case "/":
       case "/profile":
       case "/activity":
@@ -100,11 +90,27 @@ function Header() {
     }
   };
 
+  const getSecondButtonDetails = () => {
+    switch (pathname.toLowerCase()) {
+      case "/":
+        return {
+          text: "Recruit",
+          url: "/post-type-choose",
+          icon: <HiPlus className="text-white text-2xl md:hidden" />,
+        };
+      default:
+        return {
+          text: "Home",
+          url: "/",
+          icon: <HiHome className="text-white text-2xl md:hidden" />,
+        };
+    }
+  };
+
   const ChevronIcon = chooseLanguages ? HiChevronDown : HiChevronUp;
 
   const buttonDetails = getButtonDetails();
-
-  const CommonComponent = session ? Link : "button";
+  const secondButtonDetails = getSecondButtonDetails();
 
   const secondIcon =
     pathname === "/" ? (
@@ -112,25 +118,6 @@ function Header() {
     ) : (
       <HiHome className="text-white text-2xl md:hidden" />
     );
-
-  const commonProps: CommonProps = {
-    className:
-      "flex flex-col justify-center bg-blue-700  items-center p-2 hover:bg-blue-800 cursor-pointer w-full md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px] transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110  rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
-    children: (
-      <>
-        <p className="text-white text-[10px] md:text-lg lg:text-xl font-medium hidden sm:block">
-          {pathname === "/" ? "Recruit" : "Home Page"}
-        </p>
-        {secondIcon}
-      </>
-    ),
-  };
-
-  const specificProps = session
-    ? ({ href: linkDestination } as LinkProps)
-    : ({ onClick: () => setLoginAttempt(true) } as ButtonProps);
-
-  const Component = CommonComponent as React.ElementType;
 
   return (
     <div className=" z-50 flex flex-row items-center justify-between w-full p-1 md:p-4 border-b-2 bg-gray-700 animate-headerDown">
@@ -197,7 +184,29 @@ function Header() {
             </p>
           </button>
 
-          <Component {...commonProps} {...specificProps} />
+          <button
+            className="flex flex-col justify-center bg-blue-700  items-center p-2 hover:bg-blue-800 cursor-pointer 
+           w-full  rounded-lg  focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
+            md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px] transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            onClick={() => {
+              if (
+                session ||
+                pathname == "/about" ||
+                pathname == "/contact" ||
+                pathname == "/frequently-asked-questions" ||
+                pathname == "/privacy-policy"
+              ) {
+                router.push(secondButtonDetails.url);
+              } else {
+                setLoginAttempt(true);
+              }
+            }}
+          >
+            {secondButtonDetails?.icon}
+            <p className="text-white text-[10px] md:text-lg lg:text-xl font-medium hidden sm:block">
+              {secondButtonDetails?.text}
+            </p>
+          </button>
 
           <button
             className={`flex  flex-col justify-center ${
