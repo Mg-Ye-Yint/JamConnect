@@ -215,7 +215,7 @@ function Header() {
                 : "bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700"
             }  rounded-lg items-center  p-2 cursor-pointer w-full md:h-[68px] md:w-[78px] lg:w-[150px] lg:h-[68px] transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110`}
             onClick={() => {
-              session ? signOut() : signIn();
+              session ? signOut() : router.push("/signin");
             }}
           >
             {session ? (
